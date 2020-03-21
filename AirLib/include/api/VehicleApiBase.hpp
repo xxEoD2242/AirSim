@@ -104,10 +104,10 @@ public:
     }
 
 	// Input an array of arrays, which allows the 
-	virtual bool determineCommAbility(const GeoPoint& other_drone_location, const double& comm_distance, const GeoPoint& current_position) const
+	virtual bool determineCommAbility(double other_d_latitude, double other_d_longitude, float other_d_altitude, const double& comm_distance, const GeoPoint& current_position) const
 	{
 		bool can_communicate = false;
-			if ((abs(other_drone_location.latitude - current_position.latitude) < comm_distance) && (abs(other_drone_location.longitude - current_position.longitude) < comm_distance))
+			if ((abs(other_d_latitude - current_position.latitude) < comm_distance) && (abs(other_d_longitude - current_position.longitude) < comm_distance) || (other_d_altitude == 0 || other_d_latitude == 0 || other_d_longitude == 0))
 			{
 				can_communicate = true;
 			}

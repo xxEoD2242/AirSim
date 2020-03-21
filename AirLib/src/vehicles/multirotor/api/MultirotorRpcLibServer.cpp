@@ -127,8 +127,8 @@ MultirotorRpcLibServer::MultirotorRpcLibServer(ApiProvider* api_provider, string
     });
 
 	(static_cast<rpc::server*>(getServer()))->
-		bind("getCommunicationsData", [&](const std::string& vehicle_name, const GeoPoint& other_drone_location) -> MultirotorRpcLibAdapators::CommunicationsData {
-		return MultirotorRpcLibAdapators::CommunicationsData(getVehicleApi(vehicle_name)->getCommunicationsData(other_drone_location));
+		bind("getCommunicationsData", [&](double latitude, double longitude, float altitude, const std::string& vehicle_name) -> MultirotorRpcLibAdapators::CommunicationsData {
+		return MultirotorRpcLibAdapators::CommunicationsData(getVehicleApi(vehicle_name)->getCommunicationsData(latitude, longitude, altitude));
 	});
 }
 

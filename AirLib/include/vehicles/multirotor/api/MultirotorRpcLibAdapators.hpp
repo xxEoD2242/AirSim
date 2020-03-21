@@ -39,24 +39,6 @@ public:
         }
     };
 
-	struct GeoPoint {
-		double latitude = 0, longitude = 0;
-		float altitude = 0;
-
-		GeoPoint()
-		{}
-
-		GeoPoint(double latitude_val, double longitude_val, float altitude_val)
-		{
-			set(latitude_val, longitude_val, altitude_val);
-		}
-
-		void set(double latitude_val, double longitude_val, float altitude_val)
-		{
-			latitude = latitude_val, longitude = longitude_val; altitude = altitude_val;
-		}
-	};
-
 	struct CommunicationsData {
 		bool can_communicate = false;
 		double communication_distance = 0.003; // meters
