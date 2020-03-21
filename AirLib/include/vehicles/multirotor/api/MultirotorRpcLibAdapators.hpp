@@ -39,6 +39,47 @@ public:
         }
     };
 
+	struct GeoPoint {
+		double latitude = 0, longitude = 0;
+		float altitude = 0;
+
+		GeoPoint()
+		{}
+
+		GeoPoint(double latitude_val, double longitude_val, float altitude_val)
+		{
+			set(latitude_val, longitude_val, altitude_val);
+		}
+
+		void set(double latitude_val, double longitude_val, float altitude_val)
+		{
+			latitude = latitude_val, longitude = longitude_val; altitude = altitude_val;
+		}
+	};
+
+	struct CommunicationsData {
+		bool can_communicate = false;
+		double communication_distance = 0.003; // meters
+		bool communication_prevented = false;
+
+		MSGPACK_DEFINE_MAP(can_communicate, communication_distance, communication_prevented);
+
+		CommunicationsData()
+		{}
+
+		CommunicationsData(const msr::airlib::CommunicationsData& s)
+		{
+			can_communicate = s.can_communicate;
+			communication_distance = s.communication_distance;
+			communication_prevented = s.communication_prevented;
+		}
+
+		msr::airlib::CommunicationsData to() const
+		{
+			return msr::airlib::CommunicationsData(can_communicate, communication_distance, communication_prevented);
+		}
+	};
+
     struct MultirotorState {
         CollisionInfo collision;
         KinematicsState kinematics_estimated;

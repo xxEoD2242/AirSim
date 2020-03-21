@@ -34,6 +34,7 @@ bool MultirotorApiBase::takeoff(float timeout_sec)
         kinematics.pose.position.y(), kinematics.pose.position.z() + getTakeoffZ(),
         0.5f, timeout_sec, DrivetrainType::MaxDegreeOfFreedom, YawMode::Zero(), -1, 1);
 
+
     //last command is to hold on to position
     //commandPosition(0, 0, getTakeoffZ(), YawMode::Zero());
 
@@ -431,6 +432,11 @@ void MultirotorApiBase::moveByRC(const RCData& rc_data)
     unused(rc_data);
     //by default we say that this command is not supported
     throw VehicleCommandNotImplementedException("moveByRC API is not implemented for this multirotor");
+}
+
+void MultirotorApiBase::updateCommunicationsAbilities()
+{
+
 }
 
 void MultirotorApiBase::moveByVelocityInternal(float vx, float vy, float vz, const YawMode& yaw_mode)

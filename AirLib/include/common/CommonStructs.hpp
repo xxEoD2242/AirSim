@@ -304,6 +304,5 @@ struct LidarData {
     LidarData()
     {}
 };
-
 }} //namespace
 #endif
