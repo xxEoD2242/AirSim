@@ -39,6 +39,7 @@ public:
         }
     };
 
+<<<<<<< HEAD:AirLib/include/vehicles/multirotor/api/MultirotorRpcLibAdaptors.hpp
     struct RotorParameters {
         msr::airlib::real_T thrust;
         msr::airlib::real_T torque_scaler;
@@ -90,6 +91,32 @@ public:
             return msr::airlib::RotorStates(d, timestamp);
         }
     };
+=======
+	struct CommunicationsData {
+		bool can_communicate = false;
+		double communication_distance = 100.0; // meters
+		bool communication_prevented = false;
+
+		// Add a msgpack definition for data parameters so that the RPC server knows how to pack
+		// and upack these values!
+		MSGPACK_DEFINE_MAP(can_communicate, communication_distance, communication_prevented);
+
+		CommunicationsData()
+		{}
+
+		CommunicationsData(const msr::airlib::CommunicationsData& s)
+		{
+			can_communicate = s.can_communicate;
+			communication_distance = s.communication_distance;
+			communication_prevented = s.communication_prevented;
+		}
+
+		msr::airlib::CommunicationsData to() const
+		{
+			return msr::airlib::CommunicationsData(can_communicate, communication_distance, communication_prevented);
+		}
+	};
+>>>>>>> Convert haversine distance to meters and compare:AirLib/include/vehicles/multirotor/api/MultirotorRpcLibAdapators.hpp
 
     struct MultirotorState {
         CollisionInfo collision;
