@@ -41,7 +41,7 @@ public:
 
 	struct CommunicationsData {
 		bool can_communicate = false;
-		double communication_distance = 0.003; // meters
+		double communication_distance = 100.0; // meters
 		bool communication_prevented = false;
 
 		// Add a msgpack definition for data parameters so that the RPC server knows how to pack

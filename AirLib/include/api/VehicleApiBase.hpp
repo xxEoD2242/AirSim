@@ -11,6 +11,7 @@
 #include "safety/SafetyEval.hpp"
 #include "common/CommonStructs.hpp"
 #include "common/ImageCaptureBase.hpp"
+#include "common/Haversine.hpp"
 #include "sensors/SensorCollection.hpp"
 #include "sensors/lidar/LidarBase.hpp"
 #include "sensors/imu/ImuBase.hpp"
@@ -107,10 +108,11 @@ public:
 	virtual bool determineCommAbility(double other_d_latitude, double other_d_longitude, float other_d_altitude, const double& comm_distance, const GeoPoint& current_position) const
 	{
 		bool can_communicate = false;
-			if ((abs(other_d_latitude - current_position.latitude) < comm_distance) && (abs(other_d_longitude - current_position.longitude) < comm_distance) || (other_d_altitude == 0 || other_d_latitude == 0 || other_d_longitude == 0))
-			{
-				can_communicate = true;
-			}
+		double distance_apart = haversine(current_position.latitude, current_position.longitude, other_d_latitude, other_d_longitude) * 1000.0; // meters
+		if ((distance_apart < comm_distance) || (other_d_altitude == 0 || other_d_latitude == 0 || other_d_longitude == 0))
+		{
+			can_communicate = true;
+		}
 		return can_communicate;
 	}
 
