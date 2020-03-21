@@ -242,6 +242,12 @@ MultirotorState MultirotorRpcLibClient::getMultirotorState(const std::string& ve
         as<MultirotorRpcLibAdaptors::MultirotorState>().to();
 }
 
+CommunicationsData MultirotorRpcLibClient::getCommunicationsData(const GeoPoint other_drone_location, const std::string& vehicle_name)
+{
+	return static_cast<rpc::client*>(getClient())->call("getCommunicationsData", other_drone_location, vehicle_name).
+		as<MultirotorRpcLibAdapators::CommunicationsData>().to();
+}
+
 void MultirotorRpcLibClient::moveByRC(const RCData& rc_data, const std::string& vehicle_name)
 {
     static_cast<rpc::client*>(getClient())->call("moveByRC", MultirotorRpcLibAdaptors::RCData(rc_data), vehicle_name);

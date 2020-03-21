@@ -103,6 +103,17 @@ public:
         return false;
     }
 
+	// Input an array of arrays, which allows the 
+	virtual bool determineCommAbility(const GeoPoint& other_drone_location, const double& comm_distance, const GeoPoint& current_position) const
+	{
+		bool can_communicate = false;
+			if ((abs(other_drone_location.latitude - current_position.latitude) < comm_distance) && (abs(other_drone_location.longitude - current_position.longitude) < comm_distance))
+			{
+				can_communicate = true;
+			}
+		return can_communicate;
+	}
+
     // Sensors APIs
     virtual const SensorCollection& getSensors() const
     {
