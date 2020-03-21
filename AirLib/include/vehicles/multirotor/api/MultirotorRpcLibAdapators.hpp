@@ -44,6 +44,8 @@ public:
 		double communication_distance = 0.003; // meters
 		bool communication_prevented = false;
 
+		// Add a msgpack definition for data parameters so that the RPC server knows how to pack
+		// and upack these values!
 		MSGPACK_DEFINE_MAP(can_communicate, communication_distance, communication_prevented);
 
 		CommunicationsData()
