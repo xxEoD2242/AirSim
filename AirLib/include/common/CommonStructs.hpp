@@ -303,8 +303,6 @@ struct LidarData {
     LidarData()
     {}
 };
-<<<<<<< HEAD
-=======
 
 struct DistanceSensorData {
     TTimePoint time_stamp;
@@ -326,6 +324,5 @@ struct MeshPositionVertexBuffersResponse {
     std::string name;
 };
 
->>>>>>> upstream/master
 }} //namespace
 #endif
