@@ -1,5 +1,5 @@
 #include "PIPCamera.h"
-#include "ConstructorHelpers.h"
+#include "UObject/ConstructorHelpers.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "Camera/CameraComponent.h"
 #include "Engine/TextureRenderTarget2D.h"
@@ -86,6 +86,8 @@ void APIPCamera::BeginPlay()
 
 msr::airlib::ProjectionMatrix APIPCamera::getProjectionMatrix(const APIPCamera::ImageType image_type) const
 {
+    msr::airlib::ProjectionMatrix mat;
+
     //TODO: avoid the need to override const cast here
     const_cast<APIPCamera*>(this)->setCameraTypeEnabled(image_type, true);
     const USceneCaptureComponent2D* capture = const_cast<APIPCamera*>(this)->getCaptureComponent(image_type, false);
@@ -161,18 +163,17 @@ msr::airlib::ProjectionMatrix APIPCamera::getProjectionMatrix(const APIPCamera::
         FMatrix projMatTransposeInAirSim = coordinateChangeTranspose * proj_mat_transpose;
 
         //Copy the result to an airlib::ProjectionMatrix while taking transpose.
-        msr::airlib::ProjectionMatrix mat;
         for (auto row = 0; row < 4; ++row)
             for (auto col = 0; col < 4; ++col)
                 mat.matrix[col][row] = projMatTransposeInAirSim.M[row][col];
-
-        return mat;
     }
-    else {
-        msr::airlib::ProjectionMatrix mat;
+    else
         mat.setTo(Utils::nan<float>());
-        return mat;
-    }
+
+    // Disable camera after our work is done
+    const_cast<APIPCamera*>(this)->setCameraTypeEnabled(image_type, false);
+
+    return mat;
 }
 
 void APIPCamera::Tick(float DeltaTime)
@@ -244,8 +245,12 @@ void APIPCamera::setCameraTypeEnabled(ImageType type, bool enabled)
     enableCaptureComponent(type, enabled);
 }
 
-void APIPCamera::setCameraOrientation(const FRotator& rotator)
+void APIPCamera::setCameraPose(const FTransform& pose)
 {
+    FVector position = pose.GetLocation();
+    this->SetActorRelativeLocation(pose.GetLocation());
+
+    FRotator rotator = pose.GetRotation().Rotator();
     if (gimbal_stabilization_ > 0) {
         gimbald_rotator_.Pitch = rotator.Pitch;
         gimbald_rotator_.Roll = rotator.Roll;
@@ -253,6 +258,15 @@ void APIPCamera::setCameraOrientation(const FRotator& rotator)
     }
     this->SetActorRelativeRotation(rotator);
 }
+
+void APIPCamera::setCameraFoV(float fov_degrees)
+{
+    int image_count = static_cast<int>(Utils::toNumeric(ImageType::Count));
+    for (int image_type = 0; image_type < image_count; ++image_type) {
+        captures_[image_type]->FOVAngle = fov_degrees;
+    }
+}
+
 
 void APIPCamera::setupCameraFromSettings(const APIPCamera::CameraSetting& camera_setting, const NedTransform& ned_transform)
 {
@@ -277,12 +291,27 @@ void APIPCamera::setupCameraFromSettings(const APIPCamera::CameraSetting& camera
         const auto& noise_setting = camera_setting.noise_settings.at(image_type);
 
         if (image_type >= 0) { //scene capture components
-            if (image_type==0 || image_type==5 || image_type==6 || image_type==7)
-                updateCaptureComponentSetting(captures_[image_type], render_targets_[image_type], false, 
-                    image_type_to_pixel_format_map_[image_type], capture_setting, ned_transform);
-            else
-                updateCaptureComponentSetting(captures_[image_type], render_targets_[image_type], true, 
-                    image_type_to_pixel_format_map_[image_type], capture_setting, ned_transform); 
+            switch (Utils::toEnum<ImageType>(image_type)) {
+                case ImageType::Scene:
+                case ImageType::Infrared:
+                    updateCaptureComponentSetting(captures_[image_type], render_targets_[image_type], 
+                        false, image_type_to_pixel_format_map_[image_type], capture_setting, ned_transform, 
+                        false);
+                    break;
+
+                case ImageType::Segmentation:
+                case ImageType::SurfaceNormals:                
+                    updateCaptureComponentSetting(captures_[image_type], render_targets_[image_type], 
+                        true, image_type_to_pixel_format_map_[image_type], capture_setting, ned_transform, 
+                        true);
+                    break;
+
+                default:
+                    updateCaptureComponentSetting(captures_[image_type], render_targets_[image_type], 
+                        true, image_type_to_pixel_format_map_[image_type], capture_setting, ned_transform,
+                        false);
+                    break;
+            }
 
             setNoiseMaterial(image_type, captures_[image_type], captures_[image_type]->PostProcessSettings, noise_setting);
         }
@@ -295,7 +324,8 @@ void APIPCamera::setupCameraFromSettings(const APIPCamera::CameraSetting& camera
 }
 
 void APIPCamera::updateCaptureComponentSetting(USceneCaptureComponent2D* capture, UTextureRenderTarget2D* render_target, 
-    bool auto_format, const EPixelFormat& pixel_format, const CaptureSetting& setting, const NedTransform& ned_transform)
+    bool auto_format, const EPixelFormat& pixel_format, const CaptureSetting& setting, const NedTransform& ned_transform,
+    bool force_linear_gamma)
 {
     if (auto_format)
     {
@@ -303,7 +333,7 @@ void APIPCamera::updateCaptureComponentSetting(USceneCaptureComponent2D* capture
     }
     else
     {
-        render_target->InitCustomFormat(setting.width, setting.height, pixel_format, false);
+        render_target->InitCustomFormat(setting.width, setting.height, pixel_format, force_linear_gamma);
     } 
 
     if (!std::isnan(setting.target_gamma))

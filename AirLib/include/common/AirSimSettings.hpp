@@ -25,10 +25,11 @@ private:
 public: //types
     static constexpr int kSubwindowCount = 3; //must be >= 3 for now
     static constexpr char const * kVehicleTypePX4 = "px4multirotor";
-	static constexpr char const * kVehicleTypeArduCopterSolo = "arducoptersolo";
-	static constexpr char const * kVehicleTypeSimpleFlight = "simpleflight";
+    static constexpr char const * kVehicleTypeArduCopterSolo = "arducoptersolo";
+    static constexpr char const * kVehicleTypeSimpleFlight = "simpleflight";
     static constexpr char const * kVehicleTypeArduCopter = "arducopter";
     static constexpr char const * kVehicleTypePhysXCar = "physxcar";
+    static constexpr char const * kVehicleTypeArduRover = "ardurover";
     static constexpr char const * kVehicleTypeComputerVision = "computervision";
 
     static constexpr char const * kVehicleInertialFrame = "VehicleInertialFrame";
@@ -39,9 +40,12 @@ public: //types
         ImageType image_type;
         bool visible;
         std::string camera_name;
+        std::string vehicle_name;
 
-        SubwindowSetting(int window_index_val = 0, ImageType image_type_val = ImageType::Scene, bool visible_val = false, const std::string& camera_name_val = "")
-            : window_index(window_index_val), image_type(image_type_val), visible(visible_val), camera_name(camera_name_val)
+        SubwindowSetting(int window_index_val = 0, ImageType image_type_val = ImageType::Scene, 
+                bool visible_val = false, const std::string& camera_name_val = "", const std::string& vehicle_name_val = "")
+            : window_index(window_index_val), image_type(image_type_val), 
+              visible(visible_val), camera_name(camera_name_val), vehicle_name(vehicle_name_val)
         {
         }
     };
@@ -195,6 +199,12 @@ public: //types
     };
 
     struct DistanceSetting : SensorSetting {
+        // shared defaults
+        real_T min_distance = 20.0f / 100; //m
+        real_T max_distance = 4000.0f / 100; //m
+        Vector3r position = VectorMath::nanVector();
+        Rotation rotation = Rotation::nanRotation();
+        bool draw_debug_points = false;
     };
 
     struct LidarSetting : SensorSetting {
@@ -293,9 +303,9 @@ public: //types
         std::map<std::string, float> params;
     };
 
-	struct MavLinkVehicleSetting : public VehicleSetting {
-		MavLinkConnectionInfo connection_info;
-	};
+    struct MavLinkVehicleSetting : public VehicleSetting {
+        MavLinkConnectionInfo connection_info;
+    };
 
     struct SegmentationSetting {
         enum class InitMethodType {
@@ -326,6 +336,7 @@ private: //fields
 
 public: //fields
     std::string simmode_name = "";
+    std::string level_name = "";
 
     std::vector<SubwindowSetting> subwindow_settings;
     RecordingSetting recording_setting;
@@ -336,10 +347,10 @@ public: //fields
     std::vector<std::string> error_messages;
 
     bool is_record_ui_visible = false;
-    int initial_view_mode = 3; //ECameraDirectorMode::CAMERA_DIRECTOR_MODE_FLY_WITH_ME
+    int initial_view_mode = 2; //ECameraDirectorMode::CAMERA_DIRECTOR_MODE_FLY_WITH_ME
     bool enable_rpc = true;
     std::string api_server_address = "";
-	int api_port = RpcLibPort;
+    int api_port = RpcLibPort;
     std::string physics_engine_name = "";
 
     std::string clock_type = "";
@@ -351,9 +362,10 @@ public: //fields
     std::map<std::string, std::unique_ptr<VehicleSetting>> vehicles;
     CameraSetting camera_defaults;
     CameraDirectorSetting camera_director;
-	float speed_unit_factor =  1.0f;
-	std::string speed_unit_label = "m\\s";
+    float speed_unit_factor =  1.0f;
+    std::string speed_unit_label = "m\\s";
     std::map<std::string, std::unique_ptr<SensorSetting>> sensor_defaults;
+    Vector3r wind = Vector3r::Zero();
 
 public: //methods
     static AirSimSettings& singleton()
@@ -378,6 +390,7 @@ public: //methods
         checkSettingsVersion(settings_json);
 
         loadCoreSimModeSettings(settings_json, simmode_getter);
+        loadLevelSettings(settings_json);
         loadDefaultCameraSetting(settings_json, camera_defaults);
         loadCameraDirectorSetting(settings_json, camera_director, simmode_name);
         loadSubWindowsSettings(settings_json, subwindow_settings);
@@ -513,6 +526,11 @@ private:
                 physics_engine_name = "PhysX"; //this value is only informational for now
         }
     }
+    
+    void loadLevelSettings(const Settings& settings_json)
+    {
+        level_name = settings_json.getString("Default Environment", "");
+    }
 
     void loadViewModeSettings(const Settings& settings_json)
     {
@@ -528,21 +546,21 @@ private:
         }
 
         if (view_mode_string == "Fpv")
-            initial_view_mode = 1; // ECameraDirectorMode::CAMERA_DIRECTOR_MODE_FPV;
+            initial_view_mode = 0; // ECameraDirectorMode::CAMERA_DIRECTOR_MODE_FPV;
         else if (view_mode_string == "GroundObserver")
-            initial_view_mode = 2; // ECameraDirectorMode::CAMERA_DIRECTOR_MODE_GROUND_OBSERVER;
+            initial_view_mode = 1; // ECameraDirectorMode::CAMERA_DIRECTOR_MODE_GROUND_OBSERVER;
         else if (view_mode_string == "FlyWithMe")
-            initial_view_mode = 3; //ECameraDirectorMode::CAMERA_DIRECTOR_MODE_FLY_WITH_ME;
+            initial_view_mode = 2; //ECameraDirectorMode::CAMERA_DIRECTOR_MODE_FLY_WITH_ME;
         else if (view_mode_string == "Manual")
-            initial_view_mode = 4; // ECameraDirectorMode::CAMERA_DIRECTOR_MODE_MANUAL;
+            initial_view_mode = 3; // ECameraDirectorMode::CAMERA_DIRECTOR_MODE_MANUAL;
         else if (view_mode_string == "SpringArmChase")
-            initial_view_mode = 5; // ECameraDirectorMode::CAMERA_DIRECTOR_MODE_SPRINGARM_CHASE;
+            initial_view_mode = 4; // ECameraDirectorMode::CAMERA_DIRECTOR_MODE_SPRINGARM_CHASE;
         else if (view_mode_string == "Backup")
-            initial_view_mode = 6; // ECameraDirectorMode::CAMREA_DIRECTOR_MODE_BACKUP;
+            initial_view_mode = 5; // ECameraDirectorMode::CAMREA_DIRECTOR_MODE_BACKUP;
         else if (view_mode_string == "NoDisplay")
-            initial_view_mode = 7; // ECameraDirectorMode::CAMREA_DIRECTOR_MODE_NODISPLAY;
+            initial_view_mode = 6; // ECameraDirectorMode::CAMREA_DIRECTOR_MODE_NODISPLAY;
         else if (view_mode_string == "Front")
-            initial_view_mode = 8; // ECameraDirectorMode::CAMREA_DIRECTOR_MODE_FRONT;
+            initial_view_mode = 7; // ECameraDirectorMode::CAMREA_DIRECTOR_MODE_FRONT;
         else
             error_messages.push_back("ViewMode setting is not recognized: " + view_mode_string);
     }
@@ -625,7 +643,7 @@ private:
     {
         //these settings_json are expected in same section, not in another child
         std::unique_ptr<VehicleSetting> vehicle_setting_p = std::unique_ptr<VehicleSetting>(new MavLinkVehicleSetting());
-		MavLinkVehicleSetting* vehicle_setting = static_cast<MavLinkVehicleSetting*>(vehicle_setting_p.get());
+        MavLinkVehicleSetting* vehicle_setting = static_cast<MavLinkVehicleSetting*>(vehicle_setting_p.get());
 
         //TODO: we should be selecting remote if available else keyboard
         //currently keyboard is not supported so use rc as default
@@ -706,7 +724,8 @@ private:
         auto vehicle_type = Utils::toLower(settings_json.getString("VehicleType", ""));
 
         std::unique_ptr<VehicleSetting> vehicle_setting;
-        if (vehicle_type == kVehicleTypePX4 || vehicle_type == kVehicleTypeArduCopterSolo || vehicle_type == kVehicleTypeArduCopter)
+        if (vehicle_type == kVehicleTypePX4 || vehicle_type == kVehicleTypeArduCopterSolo 
+            || vehicle_type == kVehicleTypeArduCopter || vehicle_type == kVehicleTypeArduRover)
             vehicle_setting = createMavLinkVehicleSetting(settings_json);
         //for everything else we don't need derived class yet
         else {
@@ -1000,6 +1019,7 @@ private:
                         json_settings_child.getInt("ImageType", 0));
                     subwindow_setting.visible = json_settings_child.getBool("Visible", false);
                     subwindow_setting.camera_name = getCameraName(json_settings_child);
+                    subwindow_setting.vehicle_name = json_settings_child.getString("VehicleName", "");
                 }
             }
         }
@@ -1008,9 +1028,9 @@ private:
     static void initializeSubwindowSettings(std::vector<SubwindowSetting>& subwindow_settings)
     {
         subwindow_settings.clear();
-        subwindow_settings.push_back(SubwindowSetting(0, ImageType::DepthVis, false, "")); //depth
-        subwindow_settings.push_back(SubwindowSetting(0, ImageType::Segmentation, false, "")); //seg
-        subwindow_settings.push_back(SubwindowSetting(0, ImageType::Scene, false, "")); //vis
+        subwindow_settings.push_back(SubwindowSetting(0, ImageType::DepthVis, false, "", "")); //depth
+        subwindow_settings.push_back(SubwindowSetting(1, ImageType::Segmentation, false, "", "")); //seg
+        subwindow_settings.push_back(SubwindowSetting(2, ImageType::Scene, false, "", "")); //vis
     }
 
     void loadOtherSettings(const Settings& settings_json)
@@ -1019,7 +1039,7 @@ private:
         //because for docker container default is 0.0.0.0 and people get really confused why things
         //don't work
         api_server_address = settings_json.getString("LocalHostIp", "");
-		api_port = settings_json.getInt("ApiServerPort", RpcLibPort);
+        api_port = settings_json.getInt("ApiServerPort", RpcLibPort);
         is_record_ui_visible = settings_json.getBool("RecordUIVisible", true);
         engine_sound = settings_json.getBool("EngineSound", false);
         enable_rpc = settings_json.getBool("EnableRpc", enable_rpc);
@@ -1047,6 +1067,14 @@ private:
                 tod_setting.is_start_datetime_dst = tod_settings_json.getBool("StartDateTimeDst", tod_setting.is_start_datetime_dst);
                 tod_setting.update_interval_secs = tod_settings_json.getFloat("UpdateIntervalSecs", tod_setting.update_interval_secs);
                 tod_setting.move_sun = tod_settings_json.getBool("MoveSun", tod_setting.move_sun);
+            }
+        }
+
+        {
+            // Wind Settings
+            Settings child_json;
+            if (settings_json.getChild("Wind", child_json)) {
+                wind = createVectorSetting(child_json, wind);
             }
         }
     }
@@ -1152,10 +1180,12 @@ private:
 
     static void initializeDistanceSetting(DistanceSetting& distance_setting, const Settings& settings_json)
     {
-        unused(distance_setting);
-        unused(settings_json);
+        distance_setting.min_distance = settings_json.getFloat("MinDistance", distance_setting.min_distance);
+        distance_setting.max_distance = settings_json.getFloat("MaxDistance", distance_setting.max_distance);
+        distance_setting.draw_debug_points = settings_json.getBool("DrawDebugPoints", distance_setting.draw_debug_points);
 
-        //TODO: set from json as needed
+        distance_setting.position = createVectorSetting(settings_json, distance_setting.position);
+        distance_setting.rotation = createRotationSetting(settings_json, distance_setting.rotation);
     }
 
     static void initializeLidarSetting(LidarSetting& lidar_setting, const Settings& settings_json)

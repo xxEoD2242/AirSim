@@ -1,5 +1,5 @@
 #include "SimHUD.h"
-#include "ConstructorHelpers.h"
+#include "UObject/ConstructorHelpers.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Misc/FileHelper.h"
 
@@ -23,6 +23,8 @@ void ASimHUD::BeginPlay()
 
     try {
         UAirBlueprintLib::OnBeginPlay();
+        loadLevel();
+
         initializeSettings();
         setUnrealEngineSettings();
         createSimMode();
@@ -282,6 +284,13 @@ std::string ASimHUD::getSimModeFromUser()
         return "Car";
 }
 
+void ASimHUD::loadLevel()
+{
+    if (AirSimSettings::singleton().level_name != "")
+        UAirBlueprintLib::RunCommandOnGameThread([&]() {UAirBlueprintLib::loadLevel(this->GetWorld(), FString(AirSimSettings::singleton().level_name.c_str()));}, true);
+    else
+        UAirBlueprintLib::RunCommandOnGameThread([&]() {UAirBlueprintLib::loadLevel(this->GetWorld(), FString("Blocks"));}, true);
+}
 void ASimHUD::createSimMode()
 {
     std::string simmode_name = AirSimSettings::singleton().simmode_name;
@@ -310,33 +319,38 @@ void ASimHUD::initializeSubWindows()
     if (!simmode_)
         return;
 
-    auto vehicle_sim_api = simmode_->getVehicleSimApi();
+    auto default_vehicle_sim_api = simmode_->getVehicleSimApi();
 
-    if (vehicle_sim_api) {
-        auto camera_count = vehicle_sim_api->getCameraCount();
+    if (default_vehicle_sim_api) {
+        auto camera_count = default_vehicle_sim_api->getCameraCount();
 
         //setup defaults
         if (camera_count > 0) {
-            subwindow_cameras_[0] = vehicle_sim_api->getCamera("");
-            subwindow_cameras_[1] = vehicle_sim_api->getCamera(""); //camera_count > 3 ? 3 : 0
-            subwindow_cameras_[2] = vehicle_sim_api->getCamera(""); //camera_count > 4 ? 4 : 0
+            subwindow_cameras_[0] = default_vehicle_sim_api->getCamera("");
+            subwindow_cameras_[1] = default_vehicle_sim_api->getCamera(""); //camera_count > 3 ? 3 : 0
+            subwindow_cameras_[2] = default_vehicle_sim_api->getCamera(""); //camera_count > 4 ? 4 : 0
         }
         else
             subwindow_cameras_[0] = subwindow_cameras_[1] = subwindow_cameras_[2] = nullptr;
+    }
 
+    for (size_t window_index = 0; window_index < AirSimSettings::kSubwindowCount; ++window_index) {
 
-        for (size_t window_index = 0; window_index < AirSimSettings::kSubwindowCount; ++window_index) {
+        const auto& subwindow_setting = AirSimSettings::singleton().subwindow_settings.at(window_index);
+        auto vehicle_sim_api = simmode_->getVehicleSimApi(subwindow_setting.vehicle_name);
 
-            const auto& subwindow_setting = AirSimSettings::singleton().subwindow_settings.at(window_index);
-
+        if (vehicle_sim_api) {
             if (vehicle_sim_api->getCamera(subwindow_setting.camera_name) != nullptr)
                 subwindow_cameras_[subwindow_setting.window_index] = vehicle_sim_api->getCamera(subwindow_setting.camera_name);
             else
                 UAirBlueprintLib::LogMessageString("CameraID in <SubWindows> element in settings.json is invalid",
                     std::to_string(window_index), LogDebugLevel::Failure);
         }
-    }
+        else
+            UAirBlueprintLib::LogMessageString("Vehicle in <SubWindows> element in settings.json is invalid",
+                std::to_string(window_index), LogDebugLevel::Failure);
 
+    }
 
 }
 
@@ -357,9 +371,10 @@ bool ASimHUD::getSettingsText(std::string& settingsText)
         readSettingsTextFromFile(FString(msr::airlib::Settings::Settings::getUserDirectoryFullPath("settings.json").c_str()), settingsText));
 }
 
-// Attempts to parse the settings text from the command line
+// Attempts to parse the settings file path or the settings text from the command line
 // Looks for the flag "--settings". If it exists, settingsText will be set to the value.
-// Example: AirSim.exe -s '{"foo" : "bar"}' -> settingsText will be set to {"foo": "bar"}
+// Example (Path): AirSim.exe --settings "C:\path\to\settings.json"
+// Example (Text): AirSim.exe -s '{"foo" : "bar"}' -> settingsText will be set to {"foo": "bar"}
 // Returns true if the argument is present, false otherwise.
 bool ASimHUD::getSettingsTextFromCommandLine(std::string& settingsText) 
 {
@@ -372,6 +387,11 @@ bool ASimHUD::getSettingsTextFromCommandLine(std::string& settingsText)
         FString commandLineArgsFString = FString(commandLineArgs);
         int idx = commandLineArgsFString.Find(TEXT("-settings"));
         FString settingsJsonFString = commandLineArgsFString.RightChop(idx + 10);
+
+        if (readSettingsTextFromFile(settingsJsonFString.TrimQuotes(), settingsText)) {
+            return true;
+        }
+
         if (FParse::QuotedString(*settingsJsonFString, settingsTextFString)) {
             settingsText = std::string(TCHAR_TO_UTF8(*settingsTextFString));
             found = true;

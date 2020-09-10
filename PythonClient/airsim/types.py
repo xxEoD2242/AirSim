@@ -1,6 +1,7 @@
 from __future__ import print_function
 import msgpackrpc #install as admin: pip install msgpack-rpc-python
 import numpy as np #pip install numpy
+import math
 
 class MsgpackMixin:
     def __repr__(self):
@@ -62,6 +63,9 @@ class Vector3r(MsgpackMixin):
     def nanVector3r():
         return Vector3r(np.nan, np.nan, np.nan)
 
+    def containsNan(self):
+        return (math.isnan(self.x_val) or math.isnan(self.y_val) or math.isnan(self.z_val))
+
     def __add__(self, other):
         return Vector3r(self.x_val + other.x_val, self.y_val + other.y_val, self.z_val + other.z_val)
 
@@ -121,6 +125,9 @@ class Quaternionr(MsgpackMixin):
     @staticmethod
     def nanQuaternionr():
         return Quaternionr(np.nan, np.nan, np.nan, np.nan)
+
+    def containsNan(self):
+        return (math.isnan(self.w_val) or math.isnan(self.x_val) or math.isnan(self.y_val) or math.isnan(self.z_val))
 
     def __add__(self, other):
         if type(self) == type(other):
@@ -206,6 +213,9 @@ class Pose(MsgpackMixin):
     @staticmethod
     def nanPose():
         return Pose(Vector3r.nanVector3r(), Quaternionr.nanQuaternionr())
+
+    def containsNan(self):
+        return (self.position.containsNan() or self.orientation.containsNan())
 
 
 class CollisionInfo(MsgpackMixin):
@@ -304,13 +314,13 @@ class CarControls(MsgpackMixin):
 
     def set_throttle(self, throttle_val, forward):
         if (forward):
-            is_manual_gear = False
-            manual_gear = 0
-            throttle = abs(throttle_val)
+            self.is_manual_gear = False
+            self.manual_gear = 0
+            self.throttle = abs(throttle_val)
         else:
-            is_manual_gear = False
-            manual_gear = -1
-            throttle = - abs(throttle_val)
+            self.is_manual_gear = False
+            self.manual_gear = -1
+            self.throttle = - abs(throttle_val)
 
 class KinematicsState(MsgpackMixin):
     position = Vector3r()
@@ -397,3 +407,111 @@ class GpsData(MsgpackMixin):
     time_stamp = np.uint64(0)
     gnss = GnssReport()
     is_valid = False
+
+class DistanceSensorData(MsgpackMixin):
+    time_stamp = np.uint64(0)
+    distance = 0.0
+    min_distance = 0.0
+    max_distance = 0.0
+    relative_pose = Pose()
+
+class PIDGains():
+    """
+    Struct to store values of PID gains. Used to transmit controller gain values while instantiating
+    AngleLevel/AngleRate/Velocity/PositionControllerGains objects.
+    
+    Attributes:
+        kP (float): Proportional gain
+        kI (float): Integrator gain
+        kD (float): Derivative gain
+    """
+    def __init__(self, kp, ki, kd):
+        self.kp = kp
+        self.ki = ki
+        self.kd = kd
+
+    def to_list(self):
+        return [self.kp, self.ki, self.kd]
+
+class AngleRateControllerGains():
+    """
+    Struct to contain controller gains used by angle level PID controller
+    
+    Attributes:
+        roll_gains (PIDGains): kP, kI, kD for roll axis
+        pitch_gains (PIDGains): kP, kI, kD for pitch axis
+        yaw_gains (PIDGains): kP, kI, kD for yaw axis
+    """
+    def __init__(self, roll_gains = PIDGains(0.25, 0, 0),
+                       pitch_gains = PIDGains(0.25, 0, 0),
+                       yaw_gains = PIDGains(0.25, 0, 0)):
+        self.roll_gains = roll_gains
+        self.pitch_gains = pitch_gains
+        self.yaw_gains = yaw_gains
+    
+    def to_lists(self):
+        return [self.roll_gains.kp, self.pitch_gains.kp, self.yaw_gains.kp], [self.roll_gains.ki, self.pitch_gains.ki, self.yaw_gains.ki], [self.roll_gains.kd, self.pitch_gains.kd, self.yaw_gains.kd]
+
+class AngleLevelControllerGains():
+    """
+    Struct to contain controller gains used by angle rate PID controller
+    
+    Attributes:
+        roll_gains (PIDGains): kP, kI, kD for roll axis
+        pitch_gains (PIDGains): kP, kI, kD for pitch axis
+        yaw_gains (PIDGains): kP, kI, kD for yaw axis
+    """
+    def __init__(self, roll_gains = PIDGains(2.5, 0, 0),
+                       pitch_gains = PIDGains(2.5, 0, 0),
+                       yaw_gains = PIDGains(2.5, 0, 0)):
+        self.roll_gains = roll_gains
+        self.pitch_gains = pitch_gains
+        self.yaw_gains = yaw_gains
+    
+    def to_lists(self):
+        return [self.roll_gains.kp, self.pitch_gains.kp, self.yaw_gains.kp], [self.roll_gains.ki, self.pitch_gains.ki, self.yaw_gains.ki], [self.roll_gains.kd, self.pitch_gains.kd, self.yaw_gains.kd]
+
+class VelocityControllerGains():
+    """
+    Struct to contain controller gains used by velocity PID controller
+    
+    Attributes:
+        x_gains (PIDGains): kP, kI, kD for X axis
+        y_gains (PIDGains): kP, kI, kD for Y axis
+        z_gains (PIDGains): kP, kI, kD for Z axis
+    """
+    def __init__(self, x_gains = PIDGains(0.2, 0, 0),
+                       y_gains = PIDGains(0.2, 0, 0),
+                       z_gains = PIDGains(2.0, 2.0, 0)):
+        self.x_gains = x_gains
+        self.y_gains = y_gains
+        self.z_gains = z_gains
+    
+    def to_lists(self):
+        return [self.x_gains.kp, self.y_gains.kp, self.z_gains.kp], [self.x_gains.ki, self.y_gains.ki, self.z_gains.ki], [self.x_gains.kd, self.y_gains.kd, self.z_gains.kd]
+
+class PositionControllerGains():
+    """
+    Struct to contain controller gains used by position PID controller
+    
+    Attributes:
+        x_gains (PIDGains): kP, kI, kD for X axis
+        y_gains (PIDGains): kP, kI, kD for Y axis
+        z_gains (PIDGains): kP, kI, kD for Z axis
+    """
+    def __init__(self, x_gains = PIDGains(0.25, 0, 0),
+                       y_gains = PIDGains(0.25, 0, 0),
+                       z_gains = PIDGains(0.25, 0, 0)):
+        self.x_gains = x_gains
+        self.y_gains = y_gains
+        self.z_gains = z_gains
+    
+    def to_lists(self):
+        return [self.x_gains.kp, self.y_gains.kp, self.z_gains.kp], [self.x_gains.ki, self.y_gains.ki, self.z_gains.ki], [self.x_gains.kd, self.y_gains.kd, self.z_gains.kd]
+
+class MeshPositionVertexBuffersResponse(MsgpackMixin):
+    position = Vector3r()
+    orientation = Quaternionr()
+    vertices = 0.0
+    indices = 0.0
+    name = ''
