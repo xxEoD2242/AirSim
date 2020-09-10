@@ -1470,7 +1470,7 @@ namespace airlib
                         addStatusMessage("You can specify USB port in settings.json.");
                     }
                     std::this_thread::sleep_for(std::chrono::seconds(1));
-                }
+                } 
             }
 
             if (port_name_auto == "") {
