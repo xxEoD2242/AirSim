@@ -69,6 +69,7 @@ protected: //optional overrides but recommended, default values may work
 
 public: //optional overrides
     virtual void moveByRC(const RCData& rc_data);
+	virtual void updateCommunicationsAbilities();
 
     //below method exist for any firmwares that may want to use ground truth for debugging purposes
     virtual void setSimulatedGroundTruth(const Kinematics::State* kinematics, const Environment* environment)
@@ -136,6 +137,14 @@ public: //these APIs uses above low level APIs
         state.can_arm = canArm();
         return state;
     }
+
+	CommunicationsData getCommunicationsData(double latitude, double longitude, float altitude) const
+	{
+		CommunicationsData comms_data;
+		comms_data.can_communicate = determineCommAbility(latitude, longitude, altitude, comms_data.communication_distance, getGpsLocation());
+		comms_data.communication_prevented = false;
+		return comms_data;
+	}
 
     /******************* Task management Apis ********************/
     virtual void cancelLastTask() override

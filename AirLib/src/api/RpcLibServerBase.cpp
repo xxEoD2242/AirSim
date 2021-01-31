@@ -175,7 +175,7 @@ RpcLibServerBase::RpcLibServerBase(ApiProvider* api_provider, const std::string&
     pimpl_->server.
         bind("simGetSegmentationObjectID", [&](const std::string& mesh_name) -> int {
         return getWorldSimApi()->getSegmentationObjectID(mesh_name);
-    });    
+    });
 
     pimpl_->server.bind("reset", [&]() -> void {
         //Exit if already resetting.

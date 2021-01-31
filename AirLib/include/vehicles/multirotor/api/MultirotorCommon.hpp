@@ -67,6 +67,22 @@ struct MultirotorApiParams {
     int obs_window = 0;
 };
 
+struct CommunicationsData {
+	bool can_communicate = false;
+	int8_t communication_distance = 100; // meters
+	bool communication_prevented = false;
+
+	CommunicationsData()
+	{}
+
+	CommunicationsData(bool can_communicate_val, int8_t communication_distance_val, bool communication_prevented_val)
+		:can_communicate(can_communicate_val),
+		communication_distance(communication_distance_val),
+		communication_prevented(communication_prevented_val)
+	{
+	}
+};
+
 struct MultirotorState {
     CollisionInfo collision;
     Kinematics::State kinematics_estimated;

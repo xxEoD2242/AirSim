@@ -170,6 +170,11 @@ MultirotorRpcLibServer::MultirotorRpcLibServer(ApiProvider* api_provider, string
         bind("getMultirotorState", [&](const std::string& vehicle_name) -> MultirotorRpcLibAdapators::MultirotorState {
         return MultirotorRpcLibAdapators::MultirotorState(getVehicleApi(vehicle_name)->getMultirotorState()); 
     });
+
+	(static_cast<rpc::server*>(getServer()))->
+		bind("getCommunicationsData", [&](double latitude, double longitude, float altitude, const std::string& vehicle_name) -> MultirotorRpcLibAdapators::CommunicationsData {
+		return MultirotorRpcLibAdapators::CommunicationsData(getVehicleApi(vehicle_name)->getCommunicationsData(latitude, longitude, altitude));
+	});
 }
 
 //required for pimpl
