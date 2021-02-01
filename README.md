@@ -1,13 +1,32 @@
 # AirSim Collective Algorithm Testing
 This repository is a fork from Microsoft's AirSim platform. It is currently being optimized for obstacle avoidance training models for drones and vehicles, as well as experimentation with Capsule Convolutional Neural Networks (CCNN). The end of goal of this project is to develop a platform to easily test swarm-based, collective sampling state estimation networks and communications patterns.
 
+<<<<<<< HEAD
 ## Objectives
 1. Design a easy-to-use testing harness for verification of state-estimation, collective agent networks.
 2. Design, test and implement a software-in-the-loop training process for obstacle avoidance models based upon image and distance data (stereo cameras and lidar/radar data)
 3. Research Capsule Convultional Neural Networks for use in obstacle avoidance and adverserial agent detection.
 4. Design and implement a distributed, Deep reinforcement learning platform for drones utilizing either Microsoft Azure or AWS for training of complex control modueles and SLAM components.
+=======
+AirSim is a simulator for drones, cars and more, built on [Unreal Engine](https://www.unrealengine.com/) (we now also have an experimental [Unity](https://unity3d.com/) release). It is open-source, cross platform, and supports software-in-the-loop simulation with popular flight controllers such as PX4 & ArduPilot and hardware-in-loop with PX4 for physically and visually realistic simulations. It is developed as an Unreal plugin that can simply be dropped into any Unreal environment. Similarly, we have an experimental release for a Unity plugin.
+
+Our goal is to develop AirSim as a platform for AI research to experiment with deep learning, computer vision and reinforcement learning algorithms for autonomous vehicles. For this purpose, AirSim also exposes APIs to retrieve data and control vehicles in a platform independent way.
+
+**Check out the quick 1.5 minute demo**
+
+Drones in AirSim
+
+[![AirSim Drone Demo Video](docs/images/demo_video.png)](https://youtu.be/-WfTr1-OBGQ)
+
+Cars in AirSim
+
+[![AirSim Car Demo Video](docs/images/car_demo_video.png)](https://youtu.be/gnz1X3UNM5Y)
+
+>>>>>>> 5639d5526dd1eda8705cbd4ba83c9c9a7327ea33
 
 ## How to Get It
+
+[![Build Status](https://travis-ci.org/Microsoft/AirSim.svg?branch=master)](https://travis-ci.org/Microsoft/AirSim)
 
 ### Windows
 * [Download binaries](https://github.com/Microsoft/AirSim/releases)
@@ -20,7 +39,7 @@ This repository is a fork from Microsoft's AirSim platform. It is currently bein
 ### macOS
 * [Build it](https://microsoft.github.io/AirSim/build_linux)
 
-[![Build Status](https://travis-ci.org/Microsoft/AirSim.svg?branch=master)](https://travis-ci.org/Microsoft/AirSim)
+For more details, see the [use precompiled binaries](docs/use_precompiled.md) document. 
 
 ## How to Use It
 
@@ -74,7 +93,6 @@ Please take a look at [open issues](https://github.com/microsoft/airsim/issues) 
 * [More on AirSim design](https://microsoft.github.io/AirSim/design)
 * [More on code structure](https://microsoft.github.io/AirSim/code_structure)
 * [Contribution Guidelines](CONTRIBUTING.md)
-* [Trello Board](https://trello.com/b/1t2qCeaA/wishlist-by-community-for-community)
 
 ### Who is Using AirSim?
 
@@ -84,10 +102,30 @@ We are maintaining a [list](https://microsoft.github.io/AirSim/who_is_using) of 
 
 Join the AirSim group on [Facebook](https://www.facebook.com/groups/1225832467530667/) to stay up to date or ask any questions.
 
+
+## What's New
+
+- [Python wrapper for Open AI gym interfaces.](https://github.com/microsoft/AirSim/pull/3215)
+- [Python wrapper for Event camera simulation](https://github.com/microsoft/AirSim/pull/3202)
+- [Voxel grid construction](https://github.com/microsoft/AirSim/pull/3209)
+- [Programmable camera distortion](https://github.com/microsoft/AirSim/pull/3039)
+- [Wind simulation](https://github.com/microsoft/AirSim/pull/2867)
+- [Azure development environment with documentation](https://github.com/microsoft/AirSim/pull/2816)
+- ROS wrapper for [multirotor](https://github.com/microsoft/AirSim/blob/master/docs/airsim_ros_pkgs.md) and [car](https://github.com/microsoft/AirSim/pull/2743).
+
+For complete list of changes, view our [Changelog](docs/CHANGELOG.md)
+
 ## FAQ
 
 If you run into problems, check the [FAQ](https://microsoft.github.io/AirSim/faq) and feel free to post issues in the  [AirSim](https://github.com/Microsoft/AirSim/issues) repository.
 
+## Code of Conduct
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+
 ## License
 
 This project is released under the MIT License. Please review the [License file](LICENSE) for more details.
+
+

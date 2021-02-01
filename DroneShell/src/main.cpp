@@ -1221,7 +1221,7 @@ public:
         
         for (int i = 0; i < iterations; i++) {
 
-            auto image = context->client.simGetImage(0, imageType);  
+            auto image = context->client.simGetImage("0", imageType);  
 
             if (image.size() == 0) {
                 std::cout << "error getting image, check sim for error messages" << endl;
@@ -1344,7 +1344,7 @@ bool parseCommandLine(int argc, const char* argv[])
 }
 
 void printUsage() {
-    std::cout << "Usage: DroneServer [-server 127.0.0.1]" << std::endl;
+    std::cout << "Usage: DroneShell [-server 127.0.0.1]" << std::endl;
     std::cout << "The default server address is 127.0.0.1, but use the -server option to specify a different address for the server" << std::endl;
 }
 
