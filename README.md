@@ -6,7 +6,7 @@ This repository is a fork from Microsoft's AirSim platform. It is currently bein
 2. Design, test and implement a software-in-the-loop training process for obstacle avoidance models based upon image and distance data (stereo cameras and lidar/radar data)
 3. Research Capsule Convultional Neural Networks for use in obstacle avoidance and adverserial agent detection.
 4. Design and implement a distributed, Deep reinforcement learning platform for drones utilizing either Microsoft Azure or AWS for training of complex control modueles and SLAM components.
-
+ 
 ## How to Get It
 
 [![Build Status](https://travis-ci.org/Microsoft/AirSim.svg?branch=master)](https://travis-ci.org/Microsoft/AirSim)
