@@ -57,6 +57,7 @@ public:
     void moveByRC(const RCData& rc_data, const std::string& vehicle_name = "");
 
     MultirotorState getMultirotorState(const std::string& vehicle_name = "");
+    RotorStates getRotorStates(const std::string& vehicle_name = "");
 
 	CommunicationsData getCommunicationsData(double latitude = 0.0, double longitude = 0.0, float altitude = 0, const std::string& vehicle_name = "");
 

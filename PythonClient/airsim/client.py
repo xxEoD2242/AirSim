@@ -669,6 +669,7 @@ class VehicleClient:
 
     def simGetLidarSegmentation(self, lidar_name = '', vehicle_name = ''):
         """
+        NOTE: Deprecated API, use `getLidarData()` API instead
         Returns Segmentation ID of each point's collided object in the last Lidar update
 
         Args:
@@ -678,7 +679,8 @@ class VehicleClient:
         Returns:
             list[int]: Segmentation IDs of the objects
         """
-        return self.client.call('simGetLidarSegmentation', lidar_name, vehicle_name)
+        logging.warning("simGetLidarSegmentation API is deprecated, use getLidarData() API instead")
+        return self.getLidarData(lidar_name, vehicle_name).segmentation
 
     #  Plotting APIs
     def simFlushPersistentMarkers(self):
@@ -1282,7 +1284,20 @@ class MultirotorClient(VehicleClient, object):
         """
         return MultirotorState.from_msgpack(self.client.call('getMultirotorState', vehicle_name))
     getMultirotorState.__annotations__ = {'return': MultirotorState}
+    # query rotor states
+    def getRotorStates(self, vehicle_name = ''):
+        """
+        Used to obtain the current state of all a multirotor's rotors. The state includes the speeds,
+        thrusts and torques for all rotors.
 
+        Args:
+            vehicle_name (str, optional): Vehicle to get the rotor state of
+
+        Returns:
+            RotorStates: Containing a timestamp and the speed, thrust and torque of all rotors.
+        """
+        return RotorStates.from_msgpack(self.client.call('getRotorStates', vehicle_name))
+    getRotorStates.__annotations__ = {'return': RotorStates}
 
 # -----------------------------------  Car APIs ---------------------------------------------
 class CarClient(VehicleClient, object):

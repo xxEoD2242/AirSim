@@ -140,6 +140,9 @@ void ASimModeBase::BeginPlay()
     setupVehiclesAndCamera();
     FRecordingThread::init();
 
+    if (getSettings().recording_setting.enabled)
+        startRecording();
+
     UWorld* World = GetWorld();
     if (World)
     {
@@ -219,7 +222,13 @@ void ASimModeBase::initializeTimeOfDay()
         sky_sphere_ = sky_spheres[0];
         static const FName sun_prop_name(TEXT("Directional light actor"));
         auto* p = sky_sphere_class_->FindPropertyByName(sun_prop_name);
+
+#if ENGINE_MINOR_VERSION > 24
         FObjectProperty* sun_prop = CastFieldChecked<FObjectProperty>(p);
+#else
+        UObjectProperty* sun_prop = Cast<UObjectProperty>(p);
+#endif
+
         UObject* sun_obj = sun_prop->GetObjectPropertyValue_InContainer(sky_sphere_);
         sun_ = Cast<ADirectionalLight>(sun_obj);
         if (sun_)
@@ -464,9 +473,7 @@ void ASimModeBase::stopRecording()
 
 void ASimModeBase::startRecording()
 {
-    FRecordingThread::startRecording(getVehicleSimApi()->getImageCapture(),
-        getVehicleSimApi()->getGroundTruthKinematics(), getSettings().recording_setting ,
-        getVehicleSimApi());
+    FRecordingThread::startRecording(getSettings().recording_setting, getApiProvider()->getVehicleSimApis());
 }
 
 bool ASimModeBase::isRecording() const
