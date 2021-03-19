@@ -22,7 +22,7 @@ int main(int argc, char ** argv)
         airsim_ros_wrapper.lidar_async_spinner_.start();
     }
 
-    ros::spin();
-
+    ros::MultiThreadedSpinner spinner(4);
+    spinner.spin();
     return 0;
 } 
