@@ -545,6 +545,10 @@ void MultirotorApiBase::moveByRC(const RCData& rc_data)
     throw VehicleCommandNotImplementedException("moveByRC API is not implemented for this multirotor");
 }
 
+void MultirotorApiBase::updateCommunicationsAbilities()
+{
+
+}
 
 void MultirotorApiBase::moveByVelocityInternal(float vx, float vy, float vz, const YawMode& yaw_mode)
 {
