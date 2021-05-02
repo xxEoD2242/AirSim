@@ -144,14 +144,6 @@ public: //these APIs uses above low level APIs
         return state;
     }
 
-	CommunicationsData getCommunicationsData(double latitude, double longitude, float altitude) const
-	{
-		CommunicationsData comms_data;
-		comms_data.can_communicate = determineCommAbility(latitude, longitude, altitude, comms_data.communication_distance, getGpsLocation());
-		comms_data.communication_prevented = false;
-		return comms_data;
-	}
-
     /******************* Task management Apis ********************/
     virtual void cancelLastTask() override
     {
