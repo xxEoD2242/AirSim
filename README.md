@@ -1,5 +1,7 @@
-# Welcome to AirSim
+# AirSim Collective Algorithm Testing
+This repository is a fork from Microsoft's AirSim platform. It is currently being optimized for obstacle avoidance training models for drones and vehicles, as well as experimentation with Capsule Convolutional Neural Networks (CCNN). The end of goal of this project is to develop a platform to easily test swarm-based, collective sampling state estimation networks and communications patterns.
 
+<<<<<<< HEAD
 AirSim is a simulator for drones, cars and more, built on [Unreal Engine](https://www.unrealengine.com/) (we now also have an experimental [Unity](https://unity3d.com/) release). It is open-source, cross platform, and supports software-in-the-loop simulation with popular flight controllers such as PX4 & ArduPilot and hardware-in-loop with PX4 for physically and visually realistic simulations. It is developed as an Unreal plugin that can simply be dropped into any Unreal environment. Similarly, we have an experimental release for a Unity plugin.
 
 Our goal is to develop AirSim as a platform for AI research to experiment with deep learning, computer vision and reinforcement learning algorithms for autonomous vehicles. For this purpose, AirSim also exposes APIs to retrieve data and control vehicles in a platform independent way.
@@ -14,6 +16,13 @@ Cars in AirSim
 
 [![AirSim Car Demo Video](docs/images/car_demo_video.png)](https://youtu.be/gnz1X3UNM5Y)
 
+=======
+## Objectives
+1. Design a easy-to-use testing harness for verification of state-estimation, collective agent networks.
+2. Design, test and implement a software-in-the-loop training process for obstacle avoidance models based upon image and distance data (stereo cameras and lidar/radar data)
+3. Research Capsule Convultional Neural Networks for use in obstacle avoidance and adverserial agent detection.
+4. Design and implement a distributed, Deep reinforcement learning platform for drones utilizing either Microsoft Azure or AWS for training of complex control modueles and SLAM components.
+>>>>>>> Initial README edit from main fork.
 
 ## How to Get It
 
@@ -36,7 +45,9 @@ For more details, see the [use precompiled binaries](docs/use_precompiled.md) do
 
 ### Documentation
 
+*This is the basic documentation*
 View our [detailed documentation](https://microsoft.github.io/AirSim/) on all aspects of AirSim.
+<<<<<<< HEAD
 
 ### Manual drive
 
@@ -58,6 +69,10 @@ These APIs are also available as part of a separate, independent cross-platform 
 Note that you can use [SimMode setting](https://microsoft.github.io/AirSim/settings#simmode) to specify the default vehicle or the new [ComputerVision mode](https://microsoft.github.io/AirSim/image_apis#computer-vision-mode-1) so you don't get prompted each time you start AirSim.
 
 [More details](https://microsoft.github.io/AirSim/apis/)
+=======
+*A more detailed documentation of changes made and how to utilize this platform will be written during
+and upon completion of this project*
+>>>>>>> Initial README edit from main fork.
 
 ### Gathering training data
 
@@ -79,6 +94,7 @@ Press F10 to see various options available for weather effects. You can also con
 
 ![record screenshot](docs/images/weather_menu.png)
 
+<<<<<<< HEAD
 ## Tutorials
 
 - [Video - Setting up AirSim with Pixhawk Tutorial](https://youtu.be/1oY8Qu5maQQ) by Chris Lovett
@@ -88,6 +104,8 @@ Press F10 to see various options available for weather effects. You can also con
 - [The Autonomous Driving Cookbook](https://aka.ms/AutonomousDrivingCookbook) by Microsoft Deep Learning and Robotics Garage Chapter
 - [Using TensorFlow for simple collision avoidance](https://github.com/simondlevy/AirSimTensorFlow) by Simon Levy and WLU team
 
+=======
+>>>>>>> Initial README edit from main fork.
 ## Participate
 
 ### Paper
