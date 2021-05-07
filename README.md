@@ -114,6 +114,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 This project is released under the MIT License. Please review the [License file](LICENSE) for more details.
 
 
+>>>>>>> 845675d6f31d02b30ce9be5b43ef97b6e6843fc3
 
 ## How to Get It
 
@@ -221,4 +222,7 @@ This project is released under the MIT License. Please review the [License file]
 
 
 >>>>>>> 0fce17884cee98d733ce8ede54399b20d879da70
+<<<<<<< HEAD
 >>>>>>> Fixed README.md
+=======
+>>>>>>> 845675d6f31d02b30ce9be5b43ef97b6e6843fc3
