@@ -115,6 +115,8 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#wind-settings">Wind Settings</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#camera-director-settings">Camera Director Settings</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#camera-settings">Camera Settings</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#note-on-imagetype-element">Note on ImageType element</a>
@@ -161,6 +163,8 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#localhostip-setting">LocalHostIp Setting</a>
     </li>
+    <li class="toctree-l3"><a class="reference internal" href="#apiserverport">ApiServerPort</a>
+    </li>
     <li class="toctree-l3"><a class="reference internal" href="#speedunitfactor">SpeedUnitFactor</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#speedunitlabel">SpeedUnitLabel</a>
@@ -181,11 +185,17 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../multi_vehicle/">Multiple Vehicles</a>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../sensors/">Sensors</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../lidar/">LIDAR</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../InfraredCamera/">Infrared Camera</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Sensors</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../sensors/">Sensors</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../lidar/">LIDAR</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../distance_sensor/">Distance Sensor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../InfraredCamera/">Infrared Camera</a>
+                </li>
+    </ul>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../airsim_ros_pkgs/">ROS: AirSim ROS Wrapper</a>
                     </li>
@@ -224,6 +234,10 @@
                 <li class="toctree-l2"><a class="reference internal" href="../px4_setup/">PX4 Setup for AirSim</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../px4_sitl/">PX4 in SITL</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../px4_sitl_wsl2/">PX4 SITL with WSL 2</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../px4_lockstep/">PX4 Lockstep</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../px4_multi_vehicle/">PX4 Multi-vehicle in SITL</a>
                 </li>
@@ -286,6 +300,8 @@
                     <li class="toctree-l1"><a class="reference internal" href="../drone_survey/">Surveying Using Drone</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../orbit/">Orbit Trajectory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="https://youtu.be/Bp86WiLUC80">Importing a custom multirotor mesh</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Misc</span></p>
@@ -388,6 +404,7 @@ In Linux <code>./Blocks.sh --settings '{"foo" : "bar"}'</code></li>
   "ClockType": "",
   "ClockSpeed": 1,
   "LocalHostIp": "127.0.0.1",
+  "ApiServerPort": 41451,
   "RecordUIVisible": true,
   "LogMessagesVisible": true,
   "ViewMode": "",
@@ -397,6 +414,11 @@ In Linux <code>./Blocks.sh --settings '{"foo" : "bar"}'</code></li>
   "SpeedUnitFactor": 1.0,
   "SpeedUnitLabel": "m/s",
   "Wind": { "X": 0, "Y": 0, "Z": 0 },
+  "CameraDirector": {
+    "FollowDistance": -3,
+    "X": NaN, "Y": NaN, "Z": NaN,
+    "Pitch": NaN, "Roll": NaN, "Yaw": NaN
+  },
   "Recording": {
     "RecordOnMove": false,
     "RecordInterval": 0.05,
@@ -449,7 +471,7 @@ In Linux <code>./Blocks.sh --settings '{"foo" : "bar"}'</code></li>
     "Gimbal": {
       "Stabilization": 0,
       "Pitch": NaN, "Roll": NaN, "Yaw": NaN
-    }
+    },
     "X": NaN, "Y": NaN, "Z": NaN,
     "Pitch": NaN, "Roll": NaN, "Yaw": NaN
   },
@@ -490,6 +512,7 @@ In Linux <code>./Blocks.sh --settings '{"foo" : "bar"}'</code></li>
       "EnableCollisionPassthrogh": false,
       "EnableCollisions": true,
       "AllowAPIAlways": true,
+      "EnableTrace": false,
       "RC": {
         "RemoteControlID": 0,
         "AllowAPIWhenDisconnected": false
@@ -586,6 +609,12 @@ In Linux <code>./Blocks.sh --settings '{"foo" : "bar"}'</code></li>
 <p>If <code>MeshNamingMethod</code> is "" or "OwnerName" then we use mesh's owner name to generate random hash as object IDs. If it is "StaticMeshName" then we use static mesh's name to generate random hash as object IDs. Note that it is not possible to tell individual instances of the same static mesh apart this way, but the names are often more intuitive.</p>
 <h2 id="wind-settings">Wind Settings<a class="headerlink" href="#wind-settings" title="Permanent link">#</a></h2>
 <p>This setting specifies the wind speed in World frame, in NED direction. Values are in m/s. By default, speed is 0, i.e. no wind.</p>
+<h2 id="camera-director-settings">Camera Director Settings<a class="headerlink" href="#camera-director-settings" title="Permanent link">#</a></h2>
+<p>This element specifies the settings used for the camera following the vehicle in the ViewPort.</p>
+<ul>
+<li><code>FollowDistance</code>: Distance at which camera follows the vehicle, default is -8 (8 meters) for Car, -3 for others.</li>
+<li><code>X, Y, Z, Yaw, Roll, Pitch</code>: These elements allows you to specify the position and orientation of the camera relative to the vehicle. Position is in NED coordinates in SI units with origin set to Player Start location in Unreal environment. The orientation is specified in degrees.</li>
+</ul>
 <h2 id="camera-settings">Camera Settings<a class="headerlink" href="#camera-settings" title="Permanent link">#</a></h2>
 <p>The <code>CameraDefaults</code> element at root level specifies defaults used for all cameras. These defaults can be overridden for individual camera in <code>Cameras</code> element inside <code>Vehicles</code> as described later.</p>
 <h3 id="note-on-imagetype-element">Note on ImageType element<a class="headerlink" href="#note-on-imagetype-element" title="Permanent link">#</a></h3>
@@ -705,13 +734,16 @@ from the PX4 app.  The second channel for controlling the vehicle is defined by 
 <h3 id="pawnpaths">PawnPaths<a class="headerlink" href="#pawnpaths" title="Permanent link">#</a></h3>
 <p>This allows you to specify your own vehicle pawn blueprints, for example, you can replace the default car in AirSim with your own car. Your vehicle BP can reside in Content folder of your own Unreal project (i.e. outside of AirSim plugin folder). For example, if you have a car BP located in file <code>Content\MyCar\MySedanBP.uasset</code> in your project then you can set <code>"DefaultCar": {"PawnBP":"Class'/Game/MyCar/MySedanBP.MySedanBP_C'"}</code>. The <code>XYZ.XYZ_C</code> is a special notation required to specify class for BP <code>XYZ</code>. Please note that your BP must be derived from CarPawn class. By default this is not the case but you can re-parent the BP using the "Class Settings" button in toolbar in UE editor after you open the BP and then choosing "Car Pawn" for Parent Class settings in Class Options. It is also a good idea to disable "Auto Possess Player" and "Auto Possess AI" as well as set AI Controller Class to None in BP details. Please make sure your asset is included for cooking in packaging options if you are creating binary.</p>
 <h3 id="physicsenginename">PhysicsEngineName<a class="headerlink" href="#physicsenginename" title="Permanent link">#</a></h3>
-<p>For cars, we support only PhysX for now (regardless of value in this setting). For multirotors, we support <code>"FastPhysicsEngine"</code> only.</p>
+<p>For cars, we support only PhysX for now (regardless of value in this setting). For multirotors, we support <code>"FastPhysicsEngine"</code> and <code>"ExternalPhysicsEngine"</code>. <code>"ExternalPhysicsEngine"</code> allows the drone to be controlled via setVehiclePose (), keeping the drone in place until the next call. It is especially useful for moving the AirSim drone using an external simulator or on a saved path.</p>
 <h3 id="localhostip-setting">LocalHostIp Setting<a class="headerlink" href="#localhostip-setting" title="Permanent link">#</a></h3>
 <p>Now when connecting to remote machines you may need to pick a specific Ethernet adapter to reach those machines, for example, it might be
 over Ethernet or over Wi-Fi, or some other special virtual adapter or a VPN.  Your PC may have multiple networks, and those networks might not
 be allowed to talk to each other, in which case the UDP messages from one network will not get through to the others.</p>
 <p>So the LocalHostIp allows you to configure how you are reaching those machines.  The default of 127.0.0.1 is not able to reach external machines,
 this default is only used when everything you are talking to is contained on a single PC.</p>
+<h3 id="apiserverport">ApiServerPort<a class="headerlink" href="#apiserverport" title="Permanent link">#</a></h3>
+<p>This setting determines the server port that used by airsim clients, default port is 41451.
+By specifying different ports, the user can run multiple environments in parallel to accelerate data collection process.</p>
 <h3 id="speedunitfactor">SpeedUnitFactor<a class="headerlink" href="#speedunitfactor" title="Permanent link">#</a></h3>
 <p>Unit conversion factor for speed related to <code>m/s</code>, default is 1. Used in conjunction with SpeedUnitLabel. This may be only used for display purposes for example on-display speed when car is being driven. For example, to get speed in <code>miles/hr</code> use factor 2.23694.</p>
 <h3 id="speedunitlabel">SpeedUnitLabel<a class="headerlink" href="#speedunitlabel" title="Permanent link">#</a></h3>
@@ -736,7 +768,7 @@ this default is only used when everything you are talking to is contained on a s
   <div role="contentinfo">
     <!-- Copyright etc -->
     
-      <p>Copyright &copy; 2018 Microsoft Research</p>
+      <p>Copyright &copy; 2021 Microsoft Research</p>
     
   </div>
 
@@ -765,7 +797,6 @@ this default is only used when everything you are talking to is contained on a s
 </div>
     <script>var base_url = '..';</script>
     <script src="../js/theme.js" defer></script>
-      <script src="../javascripts/config.js" defer></script>
       <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
       <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
       <script src="../search/main.js" defer></script>

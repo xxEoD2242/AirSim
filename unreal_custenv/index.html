@@ -129,11 +129,17 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../multi_vehicle/">Multiple Vehicles</a>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../sensors/">Sensors</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../lidar/">LIDAR</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../InfraredCamera/">Infrared Camera</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Sensors</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../sensors/">Sensors</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../lidar/">LIDAR</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../distance_sensor/">Distance Sensor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../InfraredCamera/">Infrared Camera</a>
+                </li>
+    </ul>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../airsim_ros_pkgs/">ROS: AirSim ROS Wrapper</a>
                     </li>
@@ -172,6 +178,10 @@
                 <li class="toctree-l2"><a class="reference internal" href="../px4_setup/">PX4 Setup for AirSim</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../px4_sitl/">PX4 in SITL</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../px4_sitl_wsl2/">PX4 SITL with WSL 2</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../px4_lockstep/">PX4 Lockstep</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../px4_multi_vehicle/">PX4 Multi-vehicle in SITL</a>
                 </li>
@@ -234,6 +244,8 @@
                     <li class="toctree-l1"><a class="reference internal" href="../drone_survey/">Surveying Using Drone</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../orbit/">Orbit Trajectory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="https://youtu.be/Bp86WiLUC80">Importing a custom multirotor mesh</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Misc</span></p>
@@ -328,11 +340,13 @@
 </li>
 <li>
 <p>Go to your folder for AirSim repo and copy <code>Unreal\Plugins</code> folder in to your <code>LandscapeMountains</code> folder. This way now your own Unreal project has AirSim plugin.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the AirSim installation is fresh, i.e, hasn't been built before, make sure that you run <code>build.cmd</code> from the root directory once before copying <code>Unreal\Plugins</code> folder so that <code>AirLib</code> files are also included. If you have made some changes in the Blocks environment, make sure to run <code>update_to_git.bat</code> from <code>Unreal\Environments\Blocks</code> to update the files in <code>Unreal\Plugins</code>.</p>
+</div>
 </li>
 <li>
 <p>Edit the <code>LandscapeMountains.uproject</code> so that it looks like this</p>
-</li>
-</ol>
 <pre class="highlight"><code class="language-json">{
     "FileVersion": 3,
     "EngineAssociation": "4.24",
@@ -359,11 +373,14 @@
         }
     ]
 }</code></pre>
-<ol>
+</li>
 <li>
 <p>Close Visual Studio and the  <code>Unreal Editor</code> and right click the LandscapeMountains.uproject in Windows Explorer and select <code>Generate Visual Studio Project Files</code>.  This step detects all plugins and source files in your Unreal project and generates <code>.sln</code> file for Visual Studio.</p>
 <p><img alt="regen" src="../images/regen_sln.png" /></p>
-<p>Tip: If the <code>Generate Visual Studio Project Files</code> option is missing you may need to reboot your machine for the Unreal Shell extensions to take effect.  If it is still missing then open the LandscapeMountains.uproject in the Unreal Editor and select <code>Refresh Visual Studio Project</code> from the <code>File</code> menu.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If the <code>Generate Visual Studio Project Files</code> option is missing you may need to reboot your machine for the Unreal Shell extensions to take effect.  If it is still missing then open the LandscapeMountains.uproject in the Unreal Editor and select <code>Refresh Visual Studio Project</code> from the <code>File</code> menu.</p>
+</div>
 </li>
 <li>
 <p>Reopen <code>LandscapeMountains.sln</code> in Visual Studio, and make sure "DebugGame Editor" and "Win64" build configuration is the active build configuration.</p>
@@ -440,7 +457,7 @@ as we showed in the <code>LandscapeMountains.uproject</code> above.
   <div role="contentinfo">
     <!-- Copyright etc -->
     
-      <p>Copyright &copy; 2018 Microsoft Research</p>
+      <p>Copyright &copy; 2021 Microsoft Research</p>
     
   </div>
 
@@ -469,7 +486,6 @@ as we showed in the <code>LandscapeMountains.uproject</code> above.
 </div>
     <script>var base_url = '..';</script>
     <script src="../js/theme.js" defer></script>
-      <script src="../javascripts/config.js" defer></script>
       <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
       <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
       <script src="../search/main.js" defer></script>

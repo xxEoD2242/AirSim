@@ -143,7 +143,7 @@
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#available-imagetype-values">Available ImageType Values</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#depthplanner-and-depthperspective">DepthPlanner and DepthPerspective</a>
+    <li class="toctree-l3"><a class="reference internal" href="#depthplanar-and-depthperspective">DepthPlanar and DepthPerspective</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#depthvis">DepthVis</a>
     </li>
@@ -191,11 +191,17 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../multi_vehicle/">Multiple Vehicles</a>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../sensors/">Sensors</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../lidar/">LIDAR</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../InfraredCamera/">Infrared Camera</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Sensors</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../sensors/">Sensors</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../lidar/">LIDAR</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../distance_sensor/">Distance Sensor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../InfraredCamera/">Infrared Camera</a>
+                </li>
+    </ul>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../airsim_ros_pkgs/">ROS: AirSim ROS Wrapper</a>
                     </li>
@@ -234,6 +240,10 @@
                 <li class="toctree-l2"><a class="reference internal" href="../px4_setup/">PX4 Setup for AirSim</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../px4_sitl/">PX4 in SITL</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../px4_sitl_wsl2/">PX4 SITL with WSL 2</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../px4_lockstep/">PX4 Lockstep</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../px4_multi_vehicle/">PX4 Multi-vehicle in SITL</a>
                 </li>
@@ -296,6 +306,8 @@
                     <li class="toctree-l1"><a class="reference internal" href="../drone_survey/">Surveying Using Drone</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../orbit/">Orbit Trajectory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="https://youtu.be/Bp86WiLUC80">Importing a custom multirotor mesh</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Misc</span></p>
@@ -408,7 +420,7 @@ responses = client.simGetImages([
     # uncompressed RGB array bytes
     airsim.ImageRequest(1, airsim.ImageType.Scene, False, False),
     # floating point uncompressed image
-    airsim.ImageRequest(1, airsim.ImageType.DepthPlanner, True)])
+    airsim.ImageRequest(1, airsim.ImageType.DepthPlanar, True)])
 
  # do something with response which contains image data, pose, timestamp etc</code></pre>
 <h4 id="using-airsim-images-with-numpy">Using AirSim Images with NumPy<a class="headerlink" href="#using-airsim-images-with-numpy" title="Permanent link">#</a></h4>
@@ -437,6 +449,9 @@ airsim.write_png(os.path.normpath(filename + '.png'), img_rgb) </code></pre>
     <pre class="highlight"><code>airsim.list_to_2d_float_array(response.image_data_float, response.width, response.height)</code></pre>
     You can also save float array to .pfm file (Portable Float Map format) using <code>airsim.write_pfm()</code> function.</p>
 </li>
+<li>
+<p>If you are looking to query position and orientation information in sync with a call to one of the image APIs, you can use <code>client.simPause(True)</code> and <code>client.simPause(False)</code> to pause the simulation while calling the image API and querying the desired physics state, ensuring that the physics state remains the same immediately after the image API call.</p>
+</li>
 </ul>
 <h3 id="c_1">C++<a class="headerlink" href="#c_1" title="Permanent link">#</a></h3>
 <pre class="highlight"><code class="language-cpp">int getStereoAndDepthImages() 
@@ -458,7 +473,7 @@ airsim.write_png(os.path.normpath(filename + '.png'), img_rgb) </code></pre>
         //uncompressed RGB array bytes
         ImageRequest("1", ImageType::Scene, false, false),       
         //floating point uncompressed image  
-        ImageRequest("1", ImageType::DepthPlanner, true) 
+        ImageRequest("1", ImageType::DepthPlanar, true) 
     };
 
     const std::vector&lt;ImageResponse&gt;&amp; response = client.simGetImages(request);
@@ -480,7 +495,7 @@ airsim.write_png(os.path.normpath(filename + '.png'), img_rgb) </code></pre>
 <h3 id="backward-compatibility-for-camera-names">Backward compatibility for camera names<a class="headerlink" href="#backward-compatibility-for-camera-names" title="Permanent link">#</a></h3>
 <p>Before AirSim v1.2, cameras were accessed using ID numbers instead of names. For backward compatibility you can still use following ID numbers for above camera names in same order as above: <code>"0"</code>, <code>"1"</code>, <code>"2"</code>, <code>"3"</code>, <code>"4"</code>. In addition, camera name <code>""</code> is also available to access the default camera which is generally the camera <code>"0"</code>.</p>
 <h2 id="computer-vision-mode_1">"Computer Vision" Mode<a class="headerlink" href="#computer-vision-mode_1" title="Permanent link">#</a></h2>
-<p>You can use AirSim in so-called "Computer Vision" mode. In this mode, physics engine is disabled and there is no vehicle, just cameras. You can move around using keyboard (use F1 to see help on keys). You can press Record button to continuously generate images. Or you can call APIs to move cameras around and take images.</p>
+<p>You can use AirSim in so-called "Computer Vision" mode. In this mode, physics engine is disabled and there is no vehicle, just cameras (If you want to have the vehicle but without its kinematics, you can use the Multirotor mode with the Physics Engine <a href="../settings/##physicsenginename">ExternalPhysicsEngine</a>). You can move around using keyboard (use F1 to see help on keys). You can press Record button to continuously generate images. Or you can call APIs to move cameras around and take images.</p>
 <p>To active this mode, edit <a href="../settings/">settings.json</a> that you can find in your <code>Documents\AirSim</code> folder (or <code>~/Documents/AirSim</code> on Linux) and make sure following values exist at root level:</p>
 <pre class="highlight"><code class="language-json">{
   "SettingsVersion": 1.2,
@@ -519,21 +534,21 @@ client.simSetCameraPose(0, camera_pose);</code></pre></p>
 <h2 id="what-does-pixel-values-mean-in-different-image-types">What Does Pixel Values Mean in Different Image Types?<a class="headerlink" href="#what-does-pixel-values-mean-in-different-image-types" title="Permanent link">#</a></h2>
 <h3 id="available-imagetype-values">Available ImageType Values<a class="headerlink" href="#available-imagetype-values" title="Permanent link">#</a></h3>
 <pre class="highlight"><code class="language-cpp">  Scene = 0, 
-  DepthPlanner = 1, 
+  DepthPlanar = 1, 
   DepthPerspective = 2,
   DepthVis = 3, 
   DisparityNormalized = 4,
   Segmentation = 5,
   SurfaceNormals = 6,
   Infrared = 7</code></pre>
-<h3 id="depthplanner-and-depthperspective">DepthPlanner and DepthPerspective<a class="headerlink" href="#depthplanner-and-depthperspective" title="Permanent link">#</a></h3>
-<p>You normally want to retrieve the depth image as float (i.e. set <code>pixels_as_float = true</code>) and specify <code>ImageType = DepthPlanner</code> or <code>ImageType = DepthPerspective</code> in <code>ImageRequest</code>. For <code>ImageType = DepthPlanner</code>, you get depth in camera plan, i.e., all points that are in plan parallel to camera have same depth. For <code>ImageType = DepthPerspective</code>, you get depth from camera using a projection ray that hits that pixel. Depending on your use case, planner depth or perspective depth may be the ground truth image that you want. For example, you may be able to feed perspective depth to ROS package such as <code>depth_image_proc</code> to generate a point cloud. Or planner depth may be more compatible with estimated depth image generated by stereo algorithms such as SGM.</p>
+<h3 id="depthplanar-and-depthperspective">DepthPlanar and DepthPerspective<a class="headerlink" href="#depthplanar-and-depthperspective" title="Permanent link">#</a></h3>
+<p>You normally want to retrieve the depth image as float (i.e. set <code>pixels_as_float = true</code>) and specify <code>ImageType = DepthPlanar</code> or <code>ImageType = DepthPerspective</code> in <code>ImageRequest</code>. For <code>ImageType = DepthPlanar</code>, you get depth in camera plane, i.e., all points that are plane-parallel to the camera have same depth. For <code>ImageType = DepthPerspective</code>, you get depth from camera using a projection ray that hits that pixel. Depending on your use case, planner depth or perspective depth may be the ground truth image that you want. For example, you may be able to feed perspective depth to ROS package such as <code>depth_image_proc</code> to generate a point cloud. Or planner depth may be more compatible with estimated depth image generated by stereo algorithms such as SGM.</p>
 <h3 id="depthvis">DepthVis<a class="headerlink" href="#depthvis" title="Permanent link">#</a></h3>
 <p>When you specify <code>ImageType = DepthVis</code> in <code>ImageRequest</code>, you get an image that helps depth visualization. In this case, each pixel value is interpolated from black to white depending on depth in camera plane in meters. The pixels with pure white means depth of 100m or more while pure black means depth of 0 meters.</p>
 <h3 id="disparitynormalized">DisparityNormalized<a class="headerlink" href="#disparitynormalized" title="Permanent link">#</a></h3>
 <p>You normally want to retrieve disparity image as float (i.e. set <code>pixels_as_float = true</code> and specify <code>ImageType = DisparityNormalized</code> in <code>ImageRequest</code>) in which case each pixel is <code>(Xl - Xr)/Xmax</code>, which is thereby normalized to values between 0 to 1.</p>
 <h3 id="segmentation">Segmentation<a class="headerlink" href="#segmentation" title="Permanent link">#</a></h3>
-<p>When you specify <code>ImageType = Segmentation</code> in <code>ImageRequest</code>, you get an image that gives you ground truth segmentation of the scene. At the startup, AirSim assigns value 0 to 255 to each mesh available in environment. This value is then mapped to a specific color in <a href="https://raw.githubusercontent.com/microsoft/AirSim/master/Unreal/Plugins/AirSim/Content/HUDAssets/seg_color_palette.png">the pallet</a>. The RGB values for each object ID can be found in <a href="../seg_rgbs.txt">this file</a>.</p>
+<p>When you specify <code>ImageType = Segmentation</code> in <code>ImageRequest</code>, you get an image that gives you ground truth segmentation of the scene. At the startup, AirSim assigns value 0 to 255 to each mesh available in environment. This value is then mapped to a specific color in <a href="https://github.com/microsoft/AirSim/blob/master/Unreal/Plugins/AirSim/Content/HUDAssets/seg_color_palette.png">the pallet</a>. The RGB values for each object ID can be found in <a href="../seg_rgbs.txt">this file</a>.</p>
 <p>You can assign a specific value (limited to the range 0-255) to a specific mesh using APIs. For example, below Python code sets the object ID for the mesh called "Ground" to 20 in Blocks environment and hence changes its color in Segmentation view:</p>
 <pre class="highlight"><code class="language-python">success = client.simSetSegmentationObjectID("Ground", 20);</code></pre>
 <p>The return value is a boolean type that lets you know if the mesh was found.</p>
@@ -559,7 +574,7 @@ print(np.unique(img_rgb[:,:,2], return_counts=True)) #blue  </code></pre></p>
 <p>If you don't know how to open Unreal Environment in Unreal Editor then try following the guide for <a href="../build_windows/">building from source</a>.</p>
 <p>Once you decide on the meshes you are interested, note down their names and use above API to set their object IDs. There are <a href="../settings/#segmentation-settings">few settings</a> available to change object ID generation behavior.</p>
 <h4 id="changing-colors-for-object-ids">Changing Colors for Object IDs<a class="headerlink" href="#changing-colors-for-object-ids" title="Permanent link">#</a></h4>
-<p>At present the color for each object ID is fixed as in <a href="https://github.com/Microsoft/AirSim/tree/master/Unreal//Plugins/AirSim/Content/HUDAssets/seg_color_pallet.png">this pallet</a>. We will be adding ability to change colors for object IDs to desired values shortly. In the meantime you can open the segmentation image in your favorite image editor and get the RGB values you are interested in.</p>
+<p>At present the color for each object ID is fixed as in <a href="https://github.com/microsoft/AirSim/blob/master/Unreal/Plugins/AirSim/Content/HUDAssets/seg_color_palette.png">this pallet</a>. We will be adding ability to change colors for object IDs to desired values shortly. In the meantime you can open the segmentation image in your favorite image editor and get the RGB values you are interested in.</p>
 <h4 id="startup-object-ids">Startup Object IDs<a class="headerlink" href="#startup-object-ids" title="Permanent link">#</a></h4>
 <p>At the start, AirSim assigns object ID to each object found in environment of type <code>UStaticMeshComponent</code> or <code>ALandscapeProxy</code>. It then either uses mesh name or owner name (depending on settings), lower cases it, removes any chars below ASCII 97 to remove numbers and some punctuations, sums int value of all chars and modulo 255 to generate the object ID. In other words, all object with same alphabet chars would get same object ID. This heuristic is simple and effective for many Unreal environments but may not be what you want. In that case, please use above APIs to change object IDs to your desired values. There are <a href="../settings/#segmentation-settings">few settings</a> available to change this behavior.</p>
 <h4 id="getting-object-id-for-mesh">Getting Object ID for Mesh<a class="headerlink" href="#getting-object-id-for-mesh" title="Permanent link">#</a></h4>
@@ -588,7 +603,7 @@ print(np.unique(img_rgb[:,:,2], return_counts=True)) #blue  </code></pre></p>
   <div role="contentinfo">
     <!-- Copyright etc -->
     
-      <p>Copyright &copy; 2018 Microsoft Research</p>
+      <p>Copyright &copy; 2021 Microsoft Research</p>
     
   </div>
 
@@ -617,7 +632,6 @@ print(np.unique(img_rgb[:,:,2], return_counts=True)) #blue  </code></pre></p>
 </div>
     <script>var base_url = '..';</script>
     <script src="../js/theme.js" defer></script>
-      <script src="../javascripts/config.js" defer></script>
       <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
       <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
       <script src="../search/main.js" defer></script>

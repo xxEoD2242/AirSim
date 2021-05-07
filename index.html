@@ -95,6 +95,48 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#license">License</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#how-to-get-it_1">How to Get It</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#windows_1">Windows</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#linux_1">Linux</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#macos_1">macOS</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#how-to-use-it_1">How to Use It</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#documentation_1">Documentation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#gathering-training-data_1">Gathering training data</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#computer-vision-mode_1">Computer Vision mode</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#weather-effects_1">Weather Effects</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#participate_1">Participate</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#paper_1">Paper</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#contribute_1">Contribute</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#who-is-using-airsim_1">Who is Using AirSim?</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#contact_1">Contact</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#whats-new_1">What's New</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#faq_1">FAQ</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#code-of-conduct_1">Code of Conduct</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#license_1">License</a>
+    </li>
     </ul>
                     </li>
                 </ul>
@@ -149,11 +191,17 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="multi_vehicle/">Multiple Vehicles</a>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="sensors/">Sensors</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="lidar/">LIDAR</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="InfraredCamera/">Infrared Camera</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Sensors</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="sensors/">Sensors</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="lidar/">LIDAR</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="distance_sensor/">Distance Sensor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="InfraredCamera/">Infrared Camera</a>
+                </li>
+    </ul>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="airsim_ros_pkgs/">ROS: AirSim ROS Wrapper</a>
                     </li>
@@ -192,6 +240,10 @@
                 <li class="toctree-l2"><a class="reference internal" href="px4_setup/">PX4 Setup for AirSim</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="px4_sitl/">PX4 in SITL</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="px4_sitl_wsl2/">PX4 SITL with WSL 2</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="px4_lockstep/">PX4 Lockstep</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="px4_multi_vehicle/">PX4 Multi-vehicle in SITL</a>
                 </li>
@@ -254,6 +306,8 @@
                     <li class="toctree-l1"><a class="reference internal" href="drone_survey/">Surveying Using Drone</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="orbit/">Orbit Trajectory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="https://youtu.be/Bp86WiLUC80">Importing a custom multirotor mesh</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Misc</span></p>
@@ -336,28 +390,6 @@
 <li>Research Capsule Convultional Neural Networks for use in obstacle avoidance and adverserial agent detection.</li>
 <li>Design and implement a distributed, Deep reinforcement learning platform for drones utilizing either Microsoft Azure or AWS for training of complex control modueles and SLAM components.</li>
 </ol>
-<p>AirSim is a simulator for drones, cars and more, built on <a href="https://www.unrealengine.com/">Unreal Engine</a> (we now also have an experimental <a href="https://unity3d.com/">Unity</a> release). It is open-source, cross platform, and supports software-in-the-loop simulation with popular flight controllers such as PX4 &amp; ArduPilot and hardware-in-loop with PX4 for physically and visually realistic simulations. It is developed as an Unreal plugin that can simply be dropped into any Unreal environment. Similarly, we have an experimental release for a Unity plugin.</p>
-<p>Our goal is to develop AirSim as a platform for AI research to experiment with deep learning, computer vision and reinforcement learning algorithms for autonomous vehicles. For this purpose, AirSim also exposes APIs to retrieve data and control vehicles in a platform independent way.</p>
-<p><strong>Check out the quick 1.5 minute demo</strong></p>
-<p>Drones in AirSim</p>
-<p><a href="https://youtu.be/-WfTr1-OBGQ"><img alt="AirSim Drone Demo Video" src="images/demo_video.png" /></a></p>
-<p>Cars in AirSim</p>
-<p><a href="https://youtu.be/gnz1X3UNM5Y"><img alt="AirSim Car Demo Video" src="images/car_demo_video.png" /></a></p>
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>5639d5526dd1eda8705cbd4ba83c9c9a7327ea33</p>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
 <h2 id="how-to-get-it">How to Get It<a class="headerlink" href="#how-to-get-it" title="Permanent link">#</a></h2>
 <p><a href="https://travis-ci.org/Microsoft/AirSim"><img alt="Build Status" src="https://travis-ci.org/Microsoft/AirSim.svg?branch=master" /></a></p>
 <h3 id="windows">Windows<a class="headerlink" href="#windows" title="Permanent link">#</a></h3>
@@ -396,7 +428,7 @@ and upon completion of this project</em></p>
 <p>More technical details are available in <a href="https://arxiv.org/abs/1705.05065">AirSim paper (FSR 2017 Conference)</a>. Please cite this as:
 <pre class="highlight"><code>@inproceedings{airsim2017fsr,
   author = {Shital Shah and Debadeepta Dey and Chris Lovett and Ashish Kapoor},
-  title = {AirSim: High-Fidelity Visual and Physical Simulation for Autonomous Vehicles},
+  title = {AirSim: High-Fidelity Visual and Physica l Simulation for Autonomous Vehicles},
   year = {2017},
   booktitle = {Field and Service Robotics},
   eprint = {arXiv:1705.05065},
@@ -412,7 +444,8 @@ and upon completion of this project</em></p>
 <h3 id="who-is-using-airsim">Who is Using AirSim?<a class="headerlink" href="#who-is-using-airsim" title="Permanent link">#</a></h3>
 <p>We are maintaining a <a href="https://microsoft.github.io/AirSim/who_is_using">list</a> of a few projects, people and groups that we are aware of. If you would like to be featured in this list please <a href="https://github.com/microsoft/airsim/issues">make a request here</a>.</p>
 <h2 id="contact">Contact<a class="headerlink" href="#contact" title="Permanent link">#</a></h2>
-<p>Join the AirSim group on <a href="https://www.facebook.com/groups/1225832467530667/">Facebook</a> to stay up to date or ask any questions.</p>
+<p>Join our <a href="https://github.com/microsoft/AirSim/discussions">GitHub Discussions group</a> to stay up to date or ask any questions.</p>
+<p>We also have an AirSim group on <a href="https://www.facebook.com/groups/1225832467530667/">Facebook</a>. </p>
 <h2 id="whats-new">What's New<a class="headerlink" href="#whats-new" title="Permanent link">#</a></h2>
 <ul>
 <li><a href="https://github.com/microsoft/AirSim/pull/3215">Python wrapper for Open AI gym interfaces.</a></li>
@@ -437,7 +470,98 @@ and upon completion of this project</em></p>
 <blockquote>
 <blockquote>
 <blockquote>
-<p>0fce17884cee98d733ce8ede54399b20d879da70</p>
+<p>845675d6f31d02b30ce9be5b43ef97b6e6843fc3</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+<h2 id="how-to-get-it_1">How to Get It<a class="headerlink" href="#how-to-get-it_1" title="Permanent link">#</a></h2>
+<p><a href="https://travis-ci.org/Microsoft/AirSim"><img alt="Build Status" src="https://travis-ci.org/Microsoft/AirSim.svg?branch=master" /></a></p>
+<h3 id="windows_1">Windows<a class="headerlink" href="#windows_1" title="Permanent link">#</a></h3>
+<ul>
+<li><a href="https://github.com/Microsoft/AirSim/releases">Download binaries</a></li>
+<li><a href="https://microsoft.github.io/AirSim/build_windows">Build it</a></li>
+</ul>
+<h3 id="linux_1">Linux<a class="headerlink" href="#linux_1" title="Permanent link">#</a></h3>
+<ul>
+<li><a href="https://github.com/Microsoft/AirSim/releases">Download binaries</a></li>
+<li><a href="https://microsoft.github.io/AirSim/build_linux">Build it</a></li>
+</ul>
+<h3 id="macos_1">macOS<a class="headerlink" href="#macos_1" title="Permanent link">#</a></h3>
+<ul>
+<li><a href="https://microsoft.github.io/AirSim/build_linux">Build it</a></li>
+</ul>
+<p>For more details, see the <a href="use_precompiled/">use precompiled binaries</a> document. </p>
+<h2 id="how-to-use-it_1">How to Use It<a class="headerlink" href="#how-to-use-it_1" title="Permanent link">#</a></h2>
+<h3 id="documentation_1">Documentation<a class="headerlink" href="#documentation_1" title="Permanent link">#</a></h3>
+<p><em>This is the basic documentation</em>
+View our <a href="https://microsoft.github.io/AirSim/">detailed documentation</a> on all aspects of AirSim.
+<em>A more detailed documentation of changes made and how to utilize this platform will be written during
+and upon completion of this project</em></p>
+<h3 id="gathering-training-data_1">Gathering training data<a class="headerlink" href="#gathering-training-data_1" title="Permanent link">#</a></h3>
+<p>There are two ways you can generate training data from AirSim for deep learning. The easiest way is to simply press the record button in the lower right corner. This will start writing pose and images for each frame. The data logging code is pretty simple and you can modify it to your heart's content.</p>
+<p><img alt="record screenshot" src="images/record_data.png" /></p>
+<p>A better way to generate training data exactly the way you want is by accessing the APIs. This allows you to be in full control of how, what, where and when you want to log data.</p>
+<h3 id="computer-vision-mode_1">Computer Vision mode<a class="headerlink" href="#computer-vision-mode_1" title="Permanent link">#</a></h3>
+<p>Yet another way to use AirSim is the so-called "Computer Vision" mode. In this mode, you don't have vehicles or physics. You can use the keyboard to move around the scene, or use APIs to position available cameras in any arbitrary pose, and collect images such as depth, disparity, surface normals or object segmentation.</p>
+<p><a href="https://microsoft.github.io/AirSim/image_apis/">More details</a></p>
+<h3 id="weather-effects_1">Weather Effects<a class="headerlink" href="#weather-effects_1" title="Permanent link">#</a></h3>
+<p>Press F10 to see various options available for weather effects. You can also control the weather using <a href="https://microsoft.github.io/AirSim/apis#weather-apis">APIs</a>. Press F1 to see other options available.</p>
+<p><img alt="record screenshot" src="images/weather_menu.png" /></p>
+<h2 id="participate_1">Participate<a class="headerlink" href="#participate_1" title="Permanent link">#</a></h2>
+<h3 id="paper_1">Paper<a class="headerlink" href="#paper_1" title="Permanent link">#</a></h3>
+<p>More technical details are available in <a href="https://arxiv.org/abs/1705.05065">AirSim paper (FSR 2017 Conference)</a>. Please cite this as:
+<pre class="highlight"><code>@inproceedings{airsim2017fsr,
+  author = {Shital Shah and Debadeepta Dey and Chris Lovett and Ashish Kapoor},
+  title = {AirSim: High-Fidelity Visual and Physical Simulation for Autonomous Vehicles},
+  year = {2017},
+  booktitle = {Field and Service Robotics},
+  eprint = {arXiv:1705.05065},
+  url = {https://arxiv.org/abs/1705.05065}
+}</code></pre></p>
+<h3 id="contribute_1">Contribute<a class="headerlink" href="#contribute_1" title="Permanent link">#</a></h3>
+<p>Please take a look at <a href="https://github.com/microsoft/airsim/issues">open issues</a> if you are looking for areas to contribute to.</p>
+<ul>
+<li><a href="https://microsoft.github.io/AirSim/design">More on AirSim design</a></li>
+<li><a href="https://microsoft.github.io/AirSim/code_structure">More on code structure</a></li>
+<li><a href="CONTRIBUTING/">Contribution Guidelines</a></li>
+</ul>
+<h3 id="who-is-using-airsim_1">Who is Using AirSim?<a class="headerlink" href="#who-is-using-airsim_1" title="Permanent link">#</a></h3>
+<p>We are maintaining a <a href="https://microsoft.github.io/AirSim/who_is_using">list</a> of a few projects, people and groups that we are aware of. If you would like to be featured in this list please <a href="https://github.com/microsoft/airsim/issues">make a request here</a>.</p>
+<h2 id="contact_1">Contact<a class="headerlink" href="#contact_1" title="Permanent link">#</a></h2>
+<p>Join the AirSim group on <a href="https://www.facebook.com/groups/1225832467530667/">Facebook</a> to stay up to date or ask any questions.</p>
+<h2 id="whats-new_1">What's New<a class="headerlink" href="#whats-new_1" title="Permanent link">#</a></h2>
+<ul>
+<li><a href="https://github.com/microsoft/AirSim/pull/3215">Python wrapper for Open AI gym interfaces.</a></li>
+<li><a href="https://github.com/microsoft/AirSim/pull/3202">Python wrapper for Event camera simulation</a></li>
+<li><a href="https://github.com/microsoft/AirSim/pull/3209">Voxel grid construction</a></li>
+<li><a href="https://github.com/microsoft/AirSim/pull/3039">Programmable camera distortion</a></li>
+<li><a href="https://github.com/microsoft/AirSim/pull/2867">Wind simulation</a></li>
+<li><a href="https://github.com/microsoft/AirSim/pull/2816">Azure development environment with documentation</a></li>
+<li>ROS wrapper for <a href="https://github.com/microsoft/AirSim/blob/master/docs/airsim_ros_pkgs.md">multirotor</a> and <a href="https://github.com/microsoft/AirSim/pull/2743">car</a>.</li>
+</ul>
+<p>For complete list of changes, view our <a href="CHANGELOG/">Changelog</a></p>
+<h2 id="faq_1">FAQ<a class="headerlink" href="#faq_1" title="Permanent link">#</a></h2>
+<p>If you run into problems, check the <a href="https://microsoft.github.io/AirSim/faq">FAQ</a> and feel free to post issues in the  <a href="https://github.com/Microsoft/AirSim/issues">AirSim</a> repository.</p>
+<h2 id="code-of-conduct_1">Code of Conduct<a class="headerlink" href="#code-of-conduct_1" title="Permanent link">#</a></h2>
+<p>This project has adopted the <a href="https://opensource.microsoft.com/codeofconduct/">Microsoft Open Source Code of Conduct</a>. For more information see the <a href="https://opensource.microsoft.com/codeofconduct/faq/">Code of Conduct FAQ</a> or contact <a href="mailto:opencode@microsoft.com">opencode@microsoft.com</a> with any additional questions or comments.</p>
+<h2 id="license_1">License<a class="headerlink" href="#license_1" title="Permanent link">#</a></h2>
+<p>This project is released under the MIT License. Please review the <a href="LICENSE">License file</a> for more details.</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>0fce17884cee98d733ce8ede54399b20d879da70
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+Fixed README.md
+=======
+845675d6f31d02b30ce9be5b43ef97b6e6843fc3</p>
 </blockquote>
 </blockquote>
 </blockquote>
@@ -463,7 +587,7 @@ and upon completion of this project</em></p>
   <div role="contentinfo">
     <!-- Copyright etc -->
     
-      <p>Copyright &copy; 2018 Microsoft Research</p>
+      <p>Copyright &copy; 2021 Microsoft Research</p>
     
   </div>
 
@@ -490,7 +614,6 @@ and upon completion of this project</em></p>
 </div>
     <script>var base_url = '.';</script>
     <script src="js/theme.js" defer></script>
-      <script src="javascripts/config.js" defer></script>
       <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
       <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
       <script src="search/main.js" defer></script>

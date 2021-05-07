@@ -103,27 +103,33 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../multi_vehicle/">Multiple Vehicles</a>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../sensors/">Sensors</a>
-                    </li>
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">LIDAR</a>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="#">Sensors</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#enabling-lidar-on-a-vehicle">Enabling lidar on a vehicle</a>
+                <li class="toctree-l2"><a class="reference internal" href="../sensors/">Sensors</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="./">LIDAR</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#enabling-lidar-on-a-vehicle">Enabling lidar on a vehicle</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#lidar-configuration">Lidar configuration</a>
+    <li class="toctree-l3"><a class="reference internal" href="#lidar-configuration">Lidar configuration</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#server-side-visualization-for-debugging">Server side visualization for debugging</a>
+    <li class="toctree-l3"><a class="reference internal" href="#server-side-visualization-for-debugging">Server side visualization for debugging</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#client-api">Client API</a>
+    <li class="toctree-l3"><a class="reference internal" href="#client-api">Client API</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#python-examples">Python Examples</a>
+    <li class="toctree-l4"><a class="reference internal" href="#python-examples">Python Examples</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#coming-soon">Coming soon</a>
+    <li class="toctree-l3"><a class="reference internal" href="#coming-soon">Coming soon</a>
     </li>
     </ul>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../InfraredCamera/">Infrared Camera</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../distance_sensor/">Distance Sensor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../InfraredCamera/">Infrared Camera</a>
+                </li>
+    </ul>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../airsim_ros_pkgs/">ROS: AirSim ROS Wrapper</a>
                     </li>
@@ -162,6 +168,10 @@
                 <li class="toctree-l2"><a class="reference internal" href="../px4_setup/">PX4 Setup for AirSim</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../px4_sitl/">PX4 in SITL</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../px4_sitl_wsl2/">PX4 SITL with WSL 2</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../px4_lockstep/">PX4 Lockstep</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../px4_multi_vehicle/">PX4 Multi-vehicle in SITL</a>
                 </li>
@@ -225,6 +235,8 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../orbit/">Orbit Trajectory</a>
                     </li>
+                    <li class="toctree-l1"><a class="" href="https://youtu.be/Bp86WiLUC80">Importing a custom multirotor mesh</a>
+                    </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Misc</span></p>
                 <ul>
@@ -277,6 +289,10 @@
   <ul class="wy-breadcrumbs">
     <li><a href="..">Docs</a> &raquo;</li>
     
+      
+        
+          <li>Sensors &raquo;</li>
+        
       
         
           <li>Using AirSim &raquo;</li>
@@ -366,11 +382,15 @@ Please see <a href="../sensors/">general sensors</a> for information on configru
 <td>DataFrame</td>
 <td>Frame for the points in output ("VehicleInertialFrame" or "SensorLocalFrame")</td>
 </tr>
+<tr>
+<td>ExternalController</td>
+<td>Whether data is to be sent to external controller such as ArduPilot or PX4 if being used (default <code>true</code>) (PX4 doesn't send Lidar data currently)</td>
+</tr>
 </tbody>
 </table>
 <p>e.g.</p>
 <pre class="highlight"><code class="language-json">{
-    "SeeDocsAt": "https://github.com/Microsoft/AirSim/blob/master/docs/settings_json.md",
+    "SeeDocsAt": "https://microsoft.github.io/AirSim/settings/",
     "SettingsVersion": 1.2,
 
     "SimMode": "Multirotor",
@@ -455,7 +475,7 @@ Please see <a href="../sensors/">general sensors</a> for information on configru
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../InfraredCamera/" class="btn btn-neutral float-right" title="Infrared Camera">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../distance_sensor/" class="btn btn-neutral float-right" title="Distance Sensor">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../sensors/" class="btn btn-neutral" title="Sensors"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -468,7 +488,7 @@ Please see <a href="../sensors/">general sensors</a> for information on configru
   <div role="contentinfo">
     <!-- Copyright etc -->
     
-      <p>Copyright &copy; 2018 Microsoft Research</p>
+      <p>Copyright &copy; 2021 Microsoft Research</p>
     
   </div>
 
@@ -491,13 +511,12 @@ Please see <a href="../sensors/">general sensors</a> for information on configru
         <span><a href="../sensors/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../InfraredCamera/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../distance_sensor/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
     <script>var base_url = '..';</script>
     <script src="../js/theme.js" defer></script>
-      <script src="../javascripts/config.js" defer></script>
       <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
       <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
       <script src="../search/main.js" defer></script>

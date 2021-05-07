@@ -103,11 +103,17 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../multi_vehicle/">Multiple Vehicles</a>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../sensors/">Sensors</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../lidar/">LIDAR</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../InfraredCamera/">Infrared Camera</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Sensors</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../sensors/">Sensors</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../lidar/">LIDAR</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../distance_sensor/">Distance Sensor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../InfraredCamera/">Infrared Camera</a>
+                </li>
+    </ul>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../airsim_ros_pkgs/">ROS: AirSim ROS Wrapper</a>
                     </li>
@@ -152,6 +158,10 @@
                 <li class="toctree-l2"><a class="reference internal" href="../px4_setup/">PX4 Setup for AirSim</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../px4_sitl/">PX4 in SITL</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../px4_sitl_wsl2/">PX4 SITL with WSL 2</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../px4_lockstep/">PX4 Lockstep</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../px4_multi_vehicle/">PX4 Multi-vehicle in SITL</a>
                 </li>
@@ -214,6 +224,8 @@
                     <li class="toctree-l1"><a class="reference internal" href="../drone_survey/">Surveying Using Drone</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../orbit/">Orbit Trajectory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="https://youtu.be/Bp86WiLUC80">Importing a custom multirotor mesh</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Misc</span></p>
@@ -288,10 +300,10 @@
             <div class="section">
               
                 <h1 id="how-to-access-meshes-in-airsim">How to Access Meshes in AIRSIM<a class="headerlink" href="#how-to-access-meshes-in-airsim" title="Permanent link">#</a></h1>
-<p>AirSim supports the ability to access the static meshes that make up the scene</p>
+<p>AirSim supports the ability to access the static meshes that make up the scene.</p>
 <h2 id="mesh-structure">Mesh structure<a class="headerlink" href="#mesh-structure" title="Permanent link">#</a></h2>
 <p>Each mesh is represented with the below struct.
-<pre class="highlight"><code>struct MeshPositionVertexBuffersResponse {
+<pre class="highlight"><code class="language-cpp">struct MeshPositionVertexBuffersResponse {
 
     Vector3r position;
     Quaternionr orientation;
@@ -299,20 +311,23 @@
     std::vector&lt;float&gt; vertices;
     std::vector&lt;uint32_t&gt; indices;
     std::string name;
-};</code></pre>
-* The position and orientation are in the Unreal coordinate system.
-* The mesh itself is a triangular mesh represented by the vertices and the indices.
-    * The triangular mesh type is typically called a <a href="https://en.wikipedia.org/wiki/Polygon_mesh#Face-vertex_meshes">Face-Vertex</a> Mesh. This means every triplet of indices hold the indexes of the vertices that make up the triangle/face.
-    * The x,y,z coordinates of the vertices are all stored in a single vector. This means the vertices vertices is Nx3 where N is number of vertices. 
-    * The position of the vertices are the global positions in the Unreal coordinate system. This means they have already been Transformed by the position and orientation.
-* </p>
+};</code></pre></p>
+<ul>
+<li>The position and orientation are in the Unreal coordinate system.</li>
+<li>The mesh itself is a triangular mesh represented by the vertices and the indices.<ul>
+<li>The triangular mesh type is typically called a <a href="https://en.wikipedia.org/wiki/Polygon_mesh#Face-vertex_meshes">Face-Vertex</a> Mesh. This means every triplet of indices hold the indexes of the vertices that make up the triangle/face.</li>
+<li>The x,y,z coordinates of the vertices are all stored in a single vector. This means the vertices vector is Nx3 where N is number of vertices. </li>
+<li>The position of the vertices are the global positions in the Unreal coordinate system. This means they have already been transformed by the position and orientation.</li>
+</ul>
+</li>
+</ul>
 <h2 id="how-to-use">How to use<a class="headerlink" href="#how-to-use" title="Permanent link">#</a></h2>
 <p>The API to get the meshes in the scene is quite simple. However, one should note that the function call is very expensive and should
  very rarely be called. In general this is ok because this function only accesses the static meshes which for most applications are
  not changing during the duration of your program.</p>
-<p>Note that you will have to use a 3rdparty library or your own custom code to actually interact with the recieved meshes. Below I utilize the
-python bindings of <a href="https://github.com/libigl/libigl">libigl</a> to visualize the recieved meshes.</p>
-<pre class="highlight"><code>import airsim
+<p>Note that you will have to use a 3rdparty library or your own custom code to actually interact with the received meshes. Below I utilize the
+Python bindings of <a href="https://github.com/libigl/libigl">libigl</a> to visualize the received meshes.</p>
+<pre class="highlight"><code class="language-python">import airsim
 
 AIRSIM_HOST_IP='127.0.0.1'
 
@@ -348,7 +363,7 @@ for m in meshes:
         vertices_reshaped=vertices_reshaped.astype(np.float64)
         indices_reshaped=indices_reshaped.astype(np.int64)
 
-        #Libigl function to convert to internal Eigen format
+        # Libigl function to convert to internal Eigen format
         v_eig=p2e(vertices_reshaped)
         i_eig=p2e(indices_reshaped)
 
@@ -377,7 +392,7 @@ for m in meshes:
   <div role="contentinfo">
     <!-- Copyright etc -->
     
-      <p>Copyright &copy; 2018 Microsoft Research</p>
+      <p>Copyright &copy; 2021 Microsoft Research</p>
     
   </div>
 
@@ -406,7 +421,6 @@ for m in meshes:
 </div>
     <script>var base_url = '..';</script>
     <script src="../js/theme.js" defer></script>
-      <script src="../javascripts/config.js" defer></script>
       <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
       <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
       <script src="../search/main.js" defer></script>

@@ -103,11 +103,17 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../multi_vehicle/">Multiple Vehicles</a>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../sensors/">Sensors</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../lidar/">LIDAR</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../InfraredCamera/">Infrared Camera</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Sensors</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../sensors/">Sensors</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../lidar/">LIDAR</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../distance_sensor/">Distance Sensor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../InfraredCamera/">Infrared Camera</a>
+                </li>
+    </ul>
                     </li>
                     <li class="toctree-l1 current"><a class="reference internal current" href="./">ROS: AirSim ROS Wrapper</a>
     <ul class="current">
@@ -154,6 +160,10 @@
                 <li class="toctree-l2"><a class="reference internal" href="../px4_setup/">PX4 Setup for AirSim</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../px4_sitl/">PX4 in SITL</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../px4_sitl_wsl2/">PX4 SITL with WSL 2</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../px4_lockstep/">PX4 Lockstep</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../px4_multi_vehicle/">PX4 Multi-vehicle in SITL</a>
                 </li>
@@ -216,6 +226,8 @@
                     <li class="toctree-l1"><a class="reference internal" href="../drone_survey/">Surveying Using Drone</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../orbit/">Orbit Trajectory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="https://youtu.be/Bp86WiLUC80">Importing a custom multirotor mesh</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Misc</span></p>
@@ -343,7 +355,7 @@ Let's look at the ROS API for both nodes: </p>
 <ul>
 <li>
 <p><code>/airsim_node/origin_geo_point</code> <a href="https://github.com/microsoft/AirSim/tree/master/ros/src/airsim_ros_pkgs/msg/GPSYaw.msg">airsim_ros_pkgs/GPSYaw</a> <br />
-GPS coordinates corresponding to global NED frame. This is set in the airsim's <a href="https://microsoft.github.io/AirSim/docs/settings/">settings.json</a> file under the <code>OriginGeopoint</code> key. </p>
+GPS coordinates corresponding to global NED frame. This is set in the airsim's <a href="https://microsoft.github.io/AirSim/settings/">settings.json</a> file under the <code>OriginGeopoint</code> key. </p>
 </li>
 <li>
 <p><code>/airsim_node/VEHICLE_NAME/global_gps</code> <a href="https://docs.ros.org/api/sensor_msgs/html/msg/NavSatFix.html">sensor_msgs/NavSatFix</a> <br />
@@ -519,7 +531,7 @@ Throttle, brake, steering and gear selections for control. Both automatic and ma
 </ul>
 <h4 id="publishers_1">Publishers:<a class="headerlink" href="#publishers_1" title="Permanent link">#</a></h4>
 <ul>
-<li><code>/vel_cmd_world_frame</code> <a href="airsim_ros_pkgs/VelCmd">airsim_ros_pkgs/VelCmd</a> <br />
+<li><code>/vel_cmd_world_frame</code> <a href="https://github.com/microsoft/AirSim/tree/master/ros/src/airsim_ros_pkgs/msg/VelCmd.msg">airsim_ros_pkgs/VelCmd</a> <br />
   Sends velocity command to <code>airsim_node</code></li>
 </ul>
 <h3 id="global-params">Global params<a class="headerlink" href="#global-params" title="Permanent link">#</a></h3>
@@ -548,7 +560,8 @@ Throttle, brake, steering and gear selections for control. Both automatic and ma
 <p>It involves enabling the built-in Windows Linux environment (WSL) in Windows10, installing a compatible Linux OS image, and finally installing the build environment as if it were a normal Linux system.</p>
 <p>Upon completion, you will be able to build and run the ros wrapper as in a native linux machine.</p>
 <h5 id="wsl1-vs-wsl2">WSL1 vs WSL2<a class="headerlink" href="#wsl1-vs-wsl2" title="Permanent link">#</a></h5>
-<p>WSL2 is the latest version of the Windows10 Subsystem for Linux. It is many times faster than WSL1 and is therefore much preferred  for building the code in terms of speed. </p>
+<p>WSL2 is the latest version of the Windows10 Subsystem for Linux. It is many times faster than WSL1 (if you use the native file system in <code>/home/...</code> rather
+than Windows mounted folders under <code>/mnt/...</code>) and is therefore much preferred for building the code in terms of speed. </p>
 <p>Once installed, you can switch between WSL1 or WSL2 versions as you prefer.</p>
 <h5 id="wsl-setup-steps">WSL Setup steps<a class="headerlink" href="#wsl-setup-steps" title="Permanent link">#</a></h5>
 <ol>
@@ -586,8 +599,7 @@ or
    e.g.
    <code>\\wsl$\Ubuntu-18.04</code></p>
 <h4 id="how-to-run-airsim-on-windows-and-ros-wrapper-on-wsl">How to run Airsim on Windows and ROS wrapper on WSL<a class="headerlink" href="#how-to-run-airsim-on-windows-and-ros-wrapper-on-wsl" title="Permanent link">#</a></h4>
-<p>You need to have the same setting.json content for the simulator and WSL (e.g., in each Documents\Airsim folder).
-For WSL 1 execute:<br />
+<p>For WSL 1 execute:<br />
 <code>export WSL_HOST_IP=127.0.0.1</code><br />
 and for WSL 2:<br />
 <code>export WSL_HOST_IP=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}')</code><br />
@@ -615,7 +627,7 @@ roslaunch airsim_ros_pkgs rviz.launch</code></pre></p>
   <div role="contentinfo">
     <!-- Copyright etc -->
     
-      <p>Copyright &copy; 2018 Microsoft Research</p>
+      <p>Copyright &copy; 2021 Microsoft Research</p>
     
   </div>
 
@@ -644,7 +656,6 @@ roslaunch airsim_ros_pkgs rviz.launch</code></pre></p>
 </div>
     <script>var base_url = '..';</script>
     <script src="../js/theme.js" defer></script>
-      <script src="../javascripts/config.js" defer></script>
       <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
       <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
       <script src="../search/main.js" defer></script>
