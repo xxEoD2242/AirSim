@@ -166,7 +166,6 @@ private:
         ros::Publisher odom_local_pub;
         ros::Publisher global_gps_pub;
         ros::Publisher env_pub;
-        ros::Published pose_pub;
         airsim_ros_pkgs::Environment env_msg;
         std::vector<SensorPublisher> sensor_pubs;
         // handle lidar seperately for max performance as data is collected on its own thread/callback
