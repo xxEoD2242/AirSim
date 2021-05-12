@@ -223,7 +223,6 @@ void AirsimROSWrapper::create_ros_pubs_from_settings_json()
                     cam_info_pub_vec_.push_back(nh_private_.advertise<sensor_msgs::CameraInfo> (curr_vehicle_name + "/" + curr_camera_name + "/camera_info", 10));
                     cam_pose_pub_vec_.push_back(nh_private_.advertise<geometry_msgs::PoseStamped>(curr_vehicle_name + "/" + curr_camera_name + "/pose", 10));
                     camera_info_msg_vec_.push_back(generate_cam_info(curr_camera_name, camera_setting, capture_setting));
-                    camera_pos_msg_vec_
                 }
             }
             // push back pair (vector of image captures, current vehicle name)
