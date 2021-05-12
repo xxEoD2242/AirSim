@@ -226,6 +226,8 @@ void AirsimROSWrapper::create_ros_pubs_from_settings_json()
             // push back pair (vector of image captures, current vehicle name)
             airsim_img_request_vehicle_name_pair_vec_.push_back(std::make_pair(current_image_request_vec, curr_vehicle_name));
 
+            pose_pub = nh_private_.advertise<geometry_msgs::PoseStamped>(curr_vehicle_name + "/front_center_custom/pose_msg", 10);
+
         }
 
         // iterate over sensors
@@ -925,6 +927,21 @@ void AirsimROSWrapper::publish_odom_tf(const nav_msgs::Odometry& odom_msg)
     odom_tf.transform.rotation.z = odom_msg.pose.pose.orientation.z;
     odom_tf.transform.rotation.w = odom_msg.pose.pose.orientation.w;
     tf_broadcaster_.sendTransform(odom_tf);
+}
+
+void AirsimROSWrapper::publish_camera_pose(const nav_msgs::Odometry& odom_msg, const std::str camera_name)
+{
+    geometry_msgs::PoseStamped odom_tf;
+    odom_tf.header = odom_msg.header;
+    odom_tf.child_frame_id = odom_msg.child_frame_id;
+    odom_tf.transform.translation.x = odom_msg.pose.pose.position.x;
+    odom_tf.transform.translation.y = odom_msg.pose.pose.position.y;
+    odom_tf.transform.translation.z = odom_msg.pose.pose.position.z;
+    odom_tf.transform.rotation.x = odom_msg.pose.pose.orientation.x;
+    odom_tf.transform.rotation.y = odom_msg.pose.pose.orientation.y;
+    odom_tf.transform.rotation.z = odom_msg.pose.pose.orientation.z;
+    odom_tf.transform.rotation.w = odom_msg.pose.pose.orientation.w;
+    pub_pose.publish(odom_tf);
 }
 
 airsim_ros_pkgs::GPSYaw AirsimROSWrapper::get_gps_msg_from_airsim_geo_point(const msr::airlib::GeoPoint& geo_point) const
