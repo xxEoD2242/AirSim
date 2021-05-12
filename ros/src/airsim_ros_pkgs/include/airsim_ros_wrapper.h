@@ -264,6 +264,7 @@ private:
     /// camera helper methods
     sensor_msgs::CameraInfo generate_cam_info(const std::string& camera_name, const CameraSetting& camera_setting, const CaptureSetting& capture_setting) const;
     cv::Mat manual_decode_depth(const ImageResponse& img_response) const;
+    geometry_msgs::PoseStamped build_camera_pose(ros::Time time, const ImageResponse& img_response, const std::string& frame_id) const;
 
     sensor_msgs::ImagePtr get_img_msg_from_response(const ImageResponse& img_response, const std::string& frame_id);
     sensor_msgs::ImagePtr get_depth_img_msg_from_response(const ImageResponse& img_response, const std::string& frame_id);

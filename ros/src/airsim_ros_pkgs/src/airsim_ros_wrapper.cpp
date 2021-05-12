@@ -221,7 +221,7 @@ void AirsimROSWrapper::create_ros_pubs_from_settings_json()
 
                     image_pub_vec_.push_back(image_transporter.advertise(curr_vehicle_name + "/" + curr_camera_name + "/" + image_type_int_to_string_map_.at(capture_setting.image_type), 1));
                     cam_info_pub_vec_.push_back(nh_private_.advertise<sensor_msgs::CameraInfo> (curr_vehicle_name + "/" + curr_camera_name + "/camera_info", 10));
-                    cam_pose_pub_vec_.push_back(nh_private_.advertise<geometry_msgs::PoseStamped>(curr_vehicle_name + "/" + curr_camera_name + "/pose_msg", 10);)
+                    cam_pose_pub_vec_.push_back(nh_private_.advertise<geometry_msgs::PoseStamped>(curr_vehicle_name + "/" + curr_camera_name + "/pose", 10));
                     camera_info_msg_vec_.push_back(generate_cam_info(curr_camera_name, camera_setting, capture_setting));
                     camera_pos_msg_vec_
                 }
@@ -930,7 +930,7 @@ void AirsimROSWrapper::publish_odom_tf(const nav_msgs::Odometry& odom_msg)
     tf_broadcaster_.sendTransform(odom_tf);
 }
 
-geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, const ImageResponse& img_response, const std::string& frame_id)
+geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, const ImageResponse& img_response, const std::string& frame_id) const
 {
     geometry_msgs::PoseStamped odom_tf;
     odom_tf.header.stamp = time;
@@ -1488,9 +1488,11 @@ void AirsimROSWrapper::process_and_publish_img_response(const std::vector<ImageR
         // msr::airlib::CameraInfo camera_info = airsim_client_.simGetCameraInfo(curr_img_response.camera_name);
 
         // update timestamp of saved cam info msgs
-        camera_info_msg_vec_[img_response_idx_internal].header.stamp = airsim_timestamp_to_ros(curr_img_response.time_stamp);
+        ros::Time ros_timestamp = airsim_timestamp_to_ros(curr_img_response.time_stamp);
+
+        camera_info_msg_vec_[img_response_idx_internal].header.stamp = ros_timestamp;
         cam_info_pub_vec_[img_response_idx_internal].publish(camera_info_msg_vec_[img_response_idx_internal]);
-        cam_pose_pub_vec_[img_response_idx_internal].publish(build_camera_pose(airsim_timestamp_to_ros(curr_img_response.time_stamp), curr_img_response, vehicle_name));
+        cam_pose_pub_vec_[img_response_idx_internal].publish(build_camera_pose(ros_timestamp, curr_img_response, vehicle_name));
 
         // DepthPlanar / DepthPerspective / DepthVis / DisparityNormalized
         if (curr_img_response.pixels_as_float)
