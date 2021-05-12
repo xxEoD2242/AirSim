@@ -930,7 +930,7 @@ void AirsimROSWrapper::publish_odom_tf(const nav_msgs::Odometry& odom_msg)
     tf_broadcaster_.sendTransform(odom_tf);
 }
 
-geometry_msgs::PoseStamped AirsimROSWrapper::publish_camera_pose(ros::Time time, const ImageResponse& img_response, const std::string& frame_id)
+geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, const ImageResponse& img_response, const std::string& frame_id)
 {
     geometry_msgs::PoseStamped odom_tf;
     odom_tf.header.stamp = time;
