@@ -125,6 +125,7 @@ void AirsimROSWrapper::create_ros_pubs_from_settings_json()
     airsim_img_request_vehicle_name_pair_vec_.clear();
     image_pub_vec_.clear();
     cam_info_pub_vec_.clear();
+    cam_pose_pub_vec_.clear();
     camera_info_msg_vec_.clear();
     vehicle_name_ptr_map_.clear();
     size_t lidar_cnt = 0;
@@ -220,13 +221,13 @@ void AirsimROSWrapper::create_ros_pubs_from_settings_json()
 
                     image_pub_vec_.push_back(image_transporter.advertise(curr_vehicle_name + "/" + curr_camera_name + "/" + image_type_int_to_string_map_.at(capture_setting.image_type), 1));
                     cam_info_pub_vec_.push_back(nh_private_.advertise<sensor_msgs::CameraInfo> (curr_vehicle_name + "/" + curr_camera_name + "/camera_info", 10));
+                    cam_pose_pub_vec_.push_back(nh_private_.advertise<geometry_msgs::PoseStamped>(curr_vehicle_name + "/" + curr_camera_name + "/pose_msg", 10);)
                     camera_info_msg_vec_.push_back(generate_cam_info(curr_camera_name, camera_setting, capture_setting));
+                    camera_pos_msg_vec_
                 }
             }
             // push back pair (vector of image captures, current vehicle name)
             airsim_img_request_vehicle_name_pair_vec_.push_back(std::make_pair(current_image_request_vec, curr_vehicle_name));
-
-            pose_pub = nh_private_.advertise<geometry_msgs::PoseStamped>(curr_vehicle_name + "/front_center_custom/pose_msg", 10);
 
         }
 
@@ -929,18 +930,19 @@ void AirsimROSWrapper::publish_odom_tf(const nav_msgs::Odometry& odom_msg)
     tf_broadcaster_.sendTransform(odom_tf);
 }
 
-void AirsimROSWrapper::publish_camera_pose(const nav_msgs::Odometry& odom_msg)
+geometry_msgs::PoseStamped AirsimROSWrapper::publish_camera_pose(ros::Time time, const ImageResponse& img_response, const std::string& frame_id)
 {
     geometry_msgs::PoseStamped odom_tf;
-    odom_tf.header = odom_msg.header;
-    odom_tf.pose.position.x = odom_msg.pose.pose.position.x;
-    odom_tf.pose.position.y = odom_msg.pose.pose.position.y;
-    odom_tf.pose.position.z = odom_msg.pose.pose.position.z;
-    odom_tf.pose.orientation.x = odom_msg.pose.pose.orientation.x;
-    odom_tf.pose.orientation.y = odom_msg.pose.pose.orientation.y;
-    odom_tf.pose.orientation.z = odom_msg.pose.pose.orientation.z;
-    odom_tf.pose.orientation.w = odom_msg.pose.pose.orientation.w;
-    pub_pose.publish(odom_tf);
+    odom_tf.header.stamp = time;
+    odom_tf.header.frame_id = frame_id;
+    odom_tf.pose.position.x = img_response.camera_position.x();
+    odom_tf.pose.position.y = img_response.camera_position.y();
+    odom_tf.pose.position.z = img_response.camera_position.z();
+    odom_tf.pose.orientation.x = img_response.camera_orientation.x();
+    odom_tf.pose.orientation.y = img_response.camera_orientation.y();
+    odom_tf.pose.orientation.z = img_response.camera_orientation.z();
+    odom_tf.pose.orientation.w = img_response.camera_orientation.w();
+    return odom_tf;
 }
 
 airsim_ros_pkgs::GPSYaw AirsimROSWrapper::get_gps_msg_from_airsim_geo_point(const msr::airlib::GeoPoint& geo_point) const
@@ -1121,7 +1123,6 @@ void AirsimROSWrapper::publish_vehicle_state()
         // odom and transforms
         vehicle_ros->odom_local_pub.publish(vehicle_ros->curr_odom);
         publish_odom_tf(vehicle_ros->curr_odom);
-        publish_camera_pose(vehicle_ros->curr_odom);
 
         // ground truth GPS position from sim/HITL
         vehicle_ros->global_gps_pub.publish(vehicle_ros->gps_sensor_msg);
@@ -1489,6 +1490,7 @@ void AirsimROSWrapper::process_and_publish_img_response(const std::vector<ImageR
         // update timestamp of saved cam info msgs
         camera_info_msg_vec_[img_response_idx_internal].header.stamp = airsim_timestamp_to_ros(curr_img_response.time_stamp);
         cam_info_pub_vec_[img_response_idx_internal].publish(camera_info_msg_vec_[img_response_idx_internal]);
+        cam_pose_pub_vec_[img_response_idx_internal].publish(build_camera_pose(airsim_timestamp_to_ros(curr_img_response.time_stamp), curr_img_response, vehicle_name));
 
         // DepthPlanar / DepthPerspective / DepthVis / DisparityNormalized
         if (curr_img_response.pixels_as_float)
@@ -1523,6 +1525,8 @@ void AirsimROSWrapper::publish_camera_tf(const ImageResponse& img_response, cons
     cam_tf_body_msg.transform.rotation.y = img_response.camera_orientation.y();
     cam_tf_body_msg.transform.rotation.z = img_response.camera_orientation.z();
     cam_tf_body_msg.transform.rotation.w = img_response.camera_orientation.w();
+
+   
 
     if (isENU_)
     {
