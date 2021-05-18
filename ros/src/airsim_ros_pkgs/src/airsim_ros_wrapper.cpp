@@ -941,6 +941,14 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     odom_tf.pose.orientation.y = img_response.camera_orientation.y();
     odom_tf.pose.orientation.z = img_response.camera_orientation.z();
     odom_tf.pose.orientation.w = img_response.camera_orientation.w();
+
+    if (isENU_)
+    {
+        std::swap(odom_tf.pose.position.x, odom_tf.pose.position.y);
+        std::swap(odom_tf.pose.orientation.x, odom_tf.pose.orientation.y);
+        odom_tf.pose.orientation.z = -odom_tf.pose.orientation.z;
+        odom_tf.pose.position.z = -odom_tf.pose.position.z;
+    }
     return odom_tf;
 }
 
