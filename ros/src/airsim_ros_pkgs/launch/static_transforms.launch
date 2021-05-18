@@ -2,6 +2,7 @@
         <node pkg="tf2_ros" type="static_transform_publisher" name="ned_to_enu_pub" args="0 0 0 1.57 0 3.14 world_ned world_enu"/>
         <node pkg="tf2_ros" type="static_transform_publisher" name="enu_to_world_pub" args="0 0 0 0 0 0 world_enu world"/>
         <node pkg="tf2_ros" type="static_transform_publisher" name="enu_to_drone_pub" args="2 0 0 0 0 3.14 world_enu PX4"/>
-
+        <node pkg="tf2_ros" type="static_transform_publisher" name="world_map_linker" args="0 0 0 0 0 0 world map" />
+        <node pkg="tf2_ros" type="static_transform_publisher" name="tf_camera" args="0.1 0 0.0 -1.57 0 -1.57 base_link camera_link"/>
         <node pkg="tf2_ros" type="static_transform_publisher" name="drone_to_camera_pub" args="0.5 0 0 1.57 0 0 PX4 front_center_custom_optical"/>
 </launch>
