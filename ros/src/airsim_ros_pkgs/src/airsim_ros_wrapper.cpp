@@ -926,14 +926,7 @@ void AirsimROSWrapper::publish_odom_tf(const nav_msgs::Odometry& odom_msg)
     odom_tf.transform.rotation.y = odom_msg.pose.pose.orientation.y;
     odom_tf.transform.rotation.z = odom_msg.pose.pose.orientation.z;
     odom_tf.transform.rotation.w = odom_msg.pose.pose.orientation.w;
-    
-    if (isENU_)
-    {
-        std::swap(odom_tf.transform.translation.x, odom_tf.transform.translation.y);
-        std::swap(odom_tf.transform.rotation.x, odom_tf.transform.rotation.y);
-        odom_tf.transform.rotation.z = -odom_tf.transform.rotation.z;
-        odom_tf.transform.translation.z = -odom_tf.transform.translation.z;
-    }
+
 
     tf_broadcaster_.sendTransform(odom_tf);
 }
@@ -951,14 +944,6 @@ void AirsimROSWrapper::publish_world_to_vehicle_tf(const nav_msgs::Odometry& odo
     odom_tf.transform.rotation.y = odom_msg.pose.pose.orientation.y;
     odom_tf.transform.rotation.z = odom_msg.pose.pose.orientation.z;
     odom_tf.transform.rotation.w = odom_msg.pose.pose.orientation.w;
-
-    if (isENU_)
-    {
-        std::swap(odom_tf.transform.posittranslationion.x, odom_tf.transform.translation.y);
-        std::swap(odom_tf.transform.rotation.x, odom_tf.transform.rotation.y);
-        odom_tf.transform.rotation.z = -odom_tf.transform.rotation.z;
-        odom_tf.transform.translation.z = -odom_tf.transform.translation.z;
-    }
 
     tf_broadcaster_.sendTransform(odom_tf);
 }
