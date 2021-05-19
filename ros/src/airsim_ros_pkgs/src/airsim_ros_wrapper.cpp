@@ -1587,6 +1587,14 @@ void AirsimROSWrapper::publish_camera_tf(const ImageResponse& img_response, cons
     quat_cam_optical.normalize();
     tf2::convert(quat_cam_optical, cam_tf_optical_msg.transform.rotation);
 
+    if (isENU_)
+    {
+        std::swap(cam_tf_optical_msg.transform.translation.x, cam_tf_optical_msg.transform.translation.y);
+        std::swap(cam_tf_optical_msg.transform.rotation.x, cam_tf_optical_msg.transform.rotation.y);
+        cam_tf_optical_msg.transform.translation.z = -cam_tf_optical_msg.transform.translation.z;
+        cam_tf_optical_msg.transform.rotation.z = -cam_tf_optical_msg.transform.rotation.z;
+    }
+
     tf_broadcaster_.sendTransform(cam_tf_body_msg);
     tf_broadcaster_.sendTransform(cam_tf_optical_msg);
 }
