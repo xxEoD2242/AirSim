@@ -926,6 +926,40 @@ void AirsimROSWrapper::publish_odom_tf(const nav_msgs::Odometry& odom_msg)
     odom_tf.transform.rotation.y = odom_msg.pose.pose.orientation.y;
     odom_tf.transform.rotation.z = odom_msg.pose.pose.orientation.z;
     odom_tf.transform.rotation.w = odom_msg.pose.pose.orientation.w;
+    
+    if (isENU_)
+    {
+        std::swap(odom_tf.pose.position.x, odom_tf.pose.position.y);
+        std::swap(odom_tf.pose.orientation.x, odom_tf.pose.orientation.y);
+        odom_tf.pose.orientation.z = -odom_tf.pose.orientation.z;
+        odom_tf.pose.position.z = -odom_tf.pose.position.z;
+    }
+
+    tf_broadcaster_.sendTransform(odom_tf);
+}
+
+void AirsimROSWrapper::publish_world_to_vehicle_tf(const nav_msgs::Odometry& odom_msg)
+{
+    geometry_msgs::TransformStamped odom_tf;
+    odom_tf.header.stamp = odom_msg.header.stamp;
+    odom_tf.header.frame_id = world_frame_id_;
+    odom_tf.child_frame_id = odom_msg.header.frame_id;
+    odom_tf.transform.translation.x = odom_msg.pose.pose.position.x;
+    odom_tf.transform.translation.y = odom_msg.pose.pose.position.y;
+    odom_tf.transform.translation.z = odom_msg.pose.pose.position.z;
+    odom_tf.transform.rotation.x = odom_msg.pose.pose.orientation.x;
+    odom_tf.transform.rotation.y = odom_msg.pose.pose.orientation.y;
+    odom_tf.transform.rotation.z = odom_msg.pose.pose.orientation.z;
+    odom_tf.transform.rotation.w = odom_msg.pose.pose.orientation.w;
+
+    if (isENU_)
+    {
+        std::swap(odom_tf.pose.position.x, odom_tf.pose.position.y);
+        std::swap(odom_tf.pose.orientation.x, odom_tf.pose.orientation.y);
+        odom_tf.pose.orientation.z = -odom_tf.pose.orientation.z;
+        odom_tf.pose.position.z = -odom_tf.pose.position.z;
+    }
+
     tf_broadcaster_.sendTransform(odom_tf);
 }
 
@@ -1130,6 +1164,7 @@ void AirsimROSWrapper::publish_vehicle_state()
         // odom and transforms
         vehicle_ros->odom_local_pub.publish(vehicle_ros->curr_odom);
         publish_odom_tf(vehicle_ros->curr_odom);
+        publish_world_to_vehicle_tf(vehicle_ros->curr_odom);
 
         // ground truth GPS position from sim/HITL
         vehicle_ros->global_gps_pub.publish(vehicle_ros->gps_sensor_msg);

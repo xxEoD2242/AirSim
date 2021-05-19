@@ -259,6 +259,7 @@ private:
     /// ROS tf broadcasters
     void publish_camera_tf(const ImageResponse& img_response, const std::string& frame_id, const std::string& child_frame_id);
     void publish_odom_tf(const nav_msgs::Odometry& odom_msg);
+    void publish_world_to_vehicle_tf(const nav_msgs::Odometry& odom_msg);
 
     /// camera helper methods
     sensor_msgs::CameraInfo generate_cam_info(const std::string& camera_name, const CameraSetting& camera_setting, const CaptureSetting& capture_setting) const;
