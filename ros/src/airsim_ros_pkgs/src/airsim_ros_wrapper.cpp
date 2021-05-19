@@ -1379,9 +1379,9 @@ void AirsimROSWrapper::append_static_camera_tf(VehicleROS* vehicle_ros, const st
     tf2::convert(static_cam_tf_body_msg.transform.rotation, quat_cam_body);
     tf2::Matrix3x3 mat_cam_body(quat_cam_body);
     tf2::Matrix3x3 mat_cam_optical;
-    mat_cam_optical.setValue(mat_cam_body.getColumn(1).getX(), mat_cam_body.getColumn(2).getX(), mat_cam_body.getColumn(0).getX(),
-                             mat_cam_body.getColumn(1).getY(), mat_cam_body.getColumn(2).getY(), mat_cam_body.getColumn(0).getY(),
-                             mat_cam_body.getColumn(1).getZ(), mat_cam_body.getColumn(2).getZ(), mat_cam_body.getColumn(0).getZ());
+    mat_cam_optical.setValue(mat_cam_body.getColumn(2).getX(), mat_cam_body.getColumn(1).getX(), mat_cam_body.getColumn(0).getX(),
+                             mat_cam_body.getColumn(2).getY(), mat_cam_body.getColumn(1).getY(), mat_cam_body.getColumn(0).getY(),
+                             mat_cam_body.getColumn(2).getZ(), mat_cam_body.getColumn(1).getZ(), mat_cam_body.getColumn(0).getZ());
     mat_cam_optical.getRotation(quat_cam_optical);
     quat_cam_optical.normalize();
     tf2::convert(quat_cam_optical, static_cam_tf_optical_msg.transform.rotation);
