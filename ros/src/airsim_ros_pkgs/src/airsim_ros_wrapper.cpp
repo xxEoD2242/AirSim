@@ -1363,14 +1363,6 @@ void AirsimROSWrapper::append_static_camera_tf(VehicleROS* vehicle_ros, const st
     static_cam_tf_body_msg.transform.rotation.z = quat.z();
     static_cam_tf_body_msg.transform.rotation.w = quat.w();
 
-    if (isENU_)
-    {
-        std::swap(static_cam_tf_body_msg.transform.translation.x, static_cam_tf_body_msg.transform.translation.y);
-        std::swap(static_cam_tf_body_msg.transform.rotation.x, static_cam_tf_body_msg.transform.rotation.y);
-        static_cam_tf_body_msg.transform.translation.z = -static_cam_tf_body_msg.transform.translation.z;
-        static_cam_tf_body_msg.transform.rotation.z = -static_cam_tf_body_msg.transform.rotation.z;
-    }
-
     geometry_msgs::TransformStamped static_cam_tf_optical_msg = static_cam_tf_body_msg;
     static_cam_tf_optical_msg.child_frame_id = camera_name + "_optical/static";
 
@@ -1385,6 +1377,14 @@ void AirsimROSWrapper::append_static_camera_tf(VehicleROS* vehicle_ros, const st
     mat_cam_optical.getRotation(quat_cam_optical);
     quat_cam_optical.normalize();
     tf2::convert(quat_cam_optical, static_cam_tf_optical_msg.transform.rotation);
+
+    if (isENU_)
+    {
+        std::swap(static_cam_tf_body_msg.transform.translation.x, static_cam_tf_body_msg.transform.translation.y);
+        std::swap(static_cam_tf_body_msg.transform.rotation.x, static_cam_tf_body_msg.transform.rotation.y);
+        static_cam_tf_body_msg.transform.translation.z = -static_cam_tf_body_msg.transform.translation.z;
+        static_cam_tf_body_msg.transform.rotation.z = -static_cam_tf_body_msg.transform.rotation.z;
+    }
 
     vehicle_ros->static_tf_msg_vec.emplace_back(static_cam_tf_body_msg);
     vehicle_ros->static_tf_msg_vec.emplace_back(static_cam_tf_optical_msg);
@@ -1555,16 +1555,6 @@ void AirsimROSWrapper::publish_camera_tf(const ImageResponse& img_response, cons
     cam_tf_body_msg.transform.rotation.z = img_response.camera_orientation.z();
     cam_tf_body_msg.transform.rotation.w = img_response.camera_orientation.w();
 
-   
-
-    if (isENU_)
-    {
-        std::swap(cam_tf_body_msg.transform.translation.x, cam_tf_body_msg.transform.translation.y);
-        std::swap(cam_tf_body_msg.transform.rotation.x, cam_tf_body_msg.transform.rotation.y);
-        cam_tf_body_msg.transform.translation.z = -cam_tf_body_msg.transform.translation.z;
-        cam_tf_body_msg.transform.rotation.z = -cam_tf_body_msg.transform.rotation.z;
-    }
-
     geometry_msgs::TransformStamped cam_tf_optical_msg;
     cam_tf_optical_msg.header.stamp = airsim_timestamp_to_ros(img_response.time_stamp);
     cam_tf_optical_msg.header.frame_id = frame_id;
@@ -1572,12 +1562,8 @@ void AirsimROSWrapper::publish_camera_tf(const ImageResponse& img_response, cons
     cam_tf_optical_msg.transform.translation.x = cam_tf_body_msg.transform.translation.x;
     cam_tf_optical_msg.transform.translation.y = cam_tf_body_msg.transform.translation.y;
     cam_tf_optical_msg.transform.translation.z = cam_tf_body_msg.transform.translation.z;
-    cam_tf_optical_msg.transform.rotation.x = cam_tf_body_msg.transform.rotation.x;
-    cam_tf_optical_msg.transform.rotation.y = cam_tf_body_msg.transform.rotation.y;
-    cam_tf_optical_msg.transform.rotation.z = cam_tf_body_msg.transform.rotation.z;
-    cam_tf_optical_msg.transform.rotation.w = cam_tf_body_msg.transform.rotation.w;
 
-    /* tf2::Quaternion quat_cam_body;
+    tf2::Quaternion quat_cam_body;
     tf2::Quaternion quat_cam_optical;
     tf2::convert(cam_tf_body_msg.transform.rotation, quat_cam_body);
     tf2::Matrix3x3 mat_cam_body(quat_cam_body);
@@ -1591,13 +1577,21 @@ void AirsimROSWrapper::publish_camera_tf(const ImageResponse& img_response, cons
     quat_cam_optical.normalize();
     tf2::convert(quat_cam_optical, cam_tf_optical_msg.transform.rotation);
 
-    if (isENU_)
+    /*if (isENU_)
     {
         std::swap(cam_tf_optical_msg.transform.translation.x, cam_tf_optical_msg.transform.translation.y);
         std::swap(cam_tf_optical_msg.transform.rotation.x, cam_tf_optical_msg.transform.rotation.y);
         cam_tf_optical_msg.transform.translation.z = -cam_tf_optical_msg.transform.translation.z;
         cam_tf_optical_msg.transform.rotation.z = -cam_tf_optical_msg.transform.rotation.z;
     }*/
+
+    if (isENU_)
+    {
+        std::swap(cam_tf_body_msg.transform.translation.x, cam_tf_body_msg.transform.translation.y);
+        std::swap(cam_tf_body_msg.transform.rotation.x, cam_tf_body_msg.transform.rotation.y);
+        cam_tf_body_msg.transform.translation.z = -cam_tf_body_msg.transform.translation.z;
+        cam_tf_body_msg.transform.rotation.z = -cam_tf_body_msg.transform.rotation.z;
+    }
 
     tf_broadcaster_.sendTransform(cam_tf_body_msg);
     tf_broadcaster_.sendTransform(cam_tf_optical_msg);
