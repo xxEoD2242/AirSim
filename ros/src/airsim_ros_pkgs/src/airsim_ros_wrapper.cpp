@@ -1572,10 +1572,10 @@ void AirsimROSWrapper::publish_camera_tf(const ImageResponse& img_response, cons
     cam_tf_optical_msg.transform.translation.x = cam_tf_body_msg.transform.translation.x;
     cam_tf_optical_msg.transform.translation.y = cam_tf_body_msg.transform.translation.y;
     cam_tf_optical_msg.transform.translation.z = cam_tf_body_msg.transform.translation.z;
-    cam_tf_optical_msg.transform.rotation.x = cam_tf_body_msg.transform.rotation.x();
-    cam_tf_optical_msg.transform.rotation.y = cam_tf_body_msg.transform.rotation.y();
-    cam_tf_optical_msg.transform.rotation.z = cam_tf_body_msg.transform.rotation.z();
-    cam_tf_optical_msg.transform.rotation.w = cam_tf_body_msg.transform.rotation.w();
+    cam_tf_optical_msg.transform.rotation.x = cam_tf_body_msg.transform.rotation.x;
+    cam_tf_optical_msg.transform.rotation.y = cam_tf_body_msg.transform.rotation.y;
+    cam_tf_optical_msg.transform.rotation.z = cam_tf_body_msg.transform.rotation.z;
+    cam_tf_optical_msg.transform.rotation.w = cam_tf_body_msg.transform.rotation.w;
 
     /* tf2::Quaternion quat_cam_body;
     tf2::Quaternion quat_cam_optical;
