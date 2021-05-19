@@ -1572,8 +1572,12 @@ void AirsimROSWrapper::publish_camera_tf(const ImageResponse& img_response, cons
     cam_tf_optical_msg.transform.translation.x = cam_tf_body_msg.transform.translation.x;
     cam_tf_optical_msg.transform.translation.y = cam_tf_body_msg.transform.translation.y;
     cam_tf_optical_msg.transform.translation.z = cam_tf_body_msg.transform.translation.z;
+    cam_tf_optical_msg.transform.rotation.x = cam_tf_body_msg.transform.rotation.x();
+    cam_tf_optical_msg.transform.rotation.y = cam_tf_body_msg.transform.rotation.y();
+    cam_tf_optical_msg.transform.rotation.z = cam_tf_body_msg.transform.rotation.z();
+    cam_tf_optical_msg.transform.rotation.w = cam_tf_body_msg.transform.rotation.w();
 
-    tf2::Quaternion quat_cam_body;
+    /* tf2::Quaternion quat_cam_body;
     tf2::Quaternion quat_cam_optical;
     tf2::convert(cam_tf_body_msg.transform.rotation, quat_cam_body);
     tf2::Matrix3x3 mat_cam_body(quat_cam_body);
@@ -1593,7 +1597,7 @@ void AirsimROSWrapper::publish_camera_tf(const ImageResponse& img_response, cons
         std::swap(cam_tf_optical_msg.transform.rotation.x, cam_tf_optical_msg.transform.rotation.y);
         cam_tf_optical_msg.transform.translation.z = -cam_tf_optical_msg.transform.translation.z;
         cam_tf_optical_msg.transform.rotation.z = -cam_tf_optical_msg.transform.rotation.z;
-    }
+    }*/
 
     tf_broadcaster_.sendTransform(cam_tf_body_msg);
     tf_broadcaster_.sendTransform(cam_tf_optical_msg);
