@@ -990,7 +990,7 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     quat_cam_optical.normalize();
     tf2::convert(quat_cam_optical, camera_pose.pose.orientation);*/
 
-    (isENU_)
+    if(isENU_)
     {
         std::swap(camera_pose.pose.position.x, camera_pose.pose.position.y);
         std::swap(camera_pose.pose.orientation.x, camera_pose.pose.orientation.y);
