@@ -1408,7 +1408,7 @@ void AirsimROSWrapper::append_static_camera_tf(VehicleROS* vehicle_ros, const st
     tf2::convert(static_cam_tf_body_msg.transform.rotation, quat_cam_body);
     tf2::Matrix3x3 mat_cam_body(quat_cam_body);
     tf2::Matrix3x3 mat_cam_optical;
-    if (isENU_)
+    if (!isENU_)
     {
         // ENU rotation for the Tait-Bryan angles
     mat_cam_optical.setValue(mat_cam_body.getColumn(1).getY(), mat_cam_body.getColumn(2).getY(), mat_cam_body.getColumn(0).getY(),
@@ -1618,7 +1618,7 @@ void AirsimROSWrapper::publish_camera_tf(const ImageResponse& img_response, cons
     // tf2::Matrix3x3 mat_cam_optical = matrix_cam_body_to_optical_ * mat_cam_body * matrix_cam_body_to_optical_inverse_;
     // tf2::Matrix3x3 mat_cam_optical = matrix_cam_body_to_optical_ * mat_cam_body;
     tf2::Matrix3x3 mat_cam_optical;
-    if (isENU_)
+    if (!isENU_)
     {
         // ENU rotation of the optical frame
     mat_cam_optical.setValue(mat_cam_body.getColumn(1).getY(), mat_cam_body.getColumn(2).getY(), mat_cam_body.getColumn(0).getY(),
