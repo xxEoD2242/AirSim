@@ -955,7 +955,7 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     
     /* geometry_msgs::TransformStamped cam_tf_body_msg;
     cam_tf_body_msg.header.stamp = time;
-    cam_tf_body_msg.header.frame_id = frame_id;
+    cam_tf_body_msg.header.frame_id = frame_id;]
     cam_tf_body_msg.child_frame_id = "camera_body";
     cam_tf_body_msg.transform.translation.x = img_response.camera_position.x();
     cam_tf_body_msg.transform.translation.y = img_response.camera_position.y();
@@ -964,8 +964,47 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     cam_tf_body_msg.transform.rotation.y = img_response.camera_orientation.y();
     cam_tf_body_msg.transform.rotation.z = img_response.camera_orientation.z();
     cam_tf_body_msg.transform.rotation.w = img_response.camera_orientation.w(); */
-    
+
+    cam02body << 0.0, 0.0, 1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0;
+
+    Matrix4d Pose_receive = Matrix4d::Identity();
+
+    Eigen::Vector3d request_position;
+    Eigen::Quaterniond request_pose;
+    request_position.x() = img_response.camera_position.x();
+    request_position.y() = img_response.camera_position.y();
+    request_position.z() = img_response.camera_position.z();
+    request_pose.x() = img_response.camera_orientation.x();
+    request_pose.y() = img_response.camera_orientation.y();
+    request_pose.z() = img_response.camera_orientation.z();
+    request_pose.w() = img_response.camera_orientation.w();
+    Pose_receive.block<3, 3>(0, 0) = request_pose.toRotationMatrix();
+    Pose_receive(0, 3) = request_position(0);
+    Pose_receive(1, 3) = request_position(1);
+    Pose_receive(2, 3) = request_position(2);
+
+    Matrix4d body_pose = Pose_receive;
+    // convert to cam pose
+    cam2world = body_pose * cam02body;
+    cam2world_quat = cam2world.block<3, 3>(0, 0);
+    last_odom_stamp = odom.header.stamp;
+
+    last_pose_world(0) = odom.pose.pose.position.x;
+    last_pose_world(1) = odom.pose.pose.position.y;
+    last_pose_world(2) = odom.pose.pose.position.z;
+
     geometry_msgs::PoseStamped odom_tf;
+    camera_pose.header = _odom.header;
+    camera_pose.header.frame_id = "/map";
+    camera_pose.pose.position.x = cam2world(0, 3);
+    camera_pose.pose.position.y = cam2world(1, 3);
+    camera_pose.pose.position.z = cam2world(2, 3);
+    camera_pose.pose.orientation.w = cam2world_quat.w();
+    camera_pose.pose.orientation.x = cam2world_quat.x();
+    camera_pose.pose.orientation.y = cam2world_quat.y();
+    camera_pose.pose.orientation.z = cam2world_quat.z();
+    
+    /* geometry_msgs::PoseStamped odom_tf;
     odom_tf.header.stamp = time;
     odom_tf.header.frame_id = "/map";
     odom_tf.pose.position.x = img_response.camera_position.x();
@@ -974,7 +1013,7 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     odom_tf.pose.orientation.x = img_response.camera_orientation.x();
     odom_tf.pose.orientation.y = img_response.camera_orientation.y();
     odom_tf.pose.orientation.z = img_response.camera_orientation.z();
-    odom_tf.pose.orientation.w = img_response.camera_orientation.w();
+    odom_tf.pose.orientation.w = img_response.camera_orientation.w(); */
     
 
     /* tf2::Quaternion quat_cam_body;
@@ -991,12 +1030,12 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
 
     if (isENU_)
     {
-        std::swap(odom_tf.pose.position.x, odom_tf.pose.position.y);
-        std::swap(odom_tf.pose.orientation.x, odom_tf.pose.orientation.y);
-        odom_tf.pose.orientation.z = -odom_tf.pose.orientation.z;
-        odom_tf.pose.position.z = -odom_tf.pose.position.z;
+        std::swap(camera_pose.pose.position.x, camera_pose.pose.position.y);
+        std::swap(camera_pose.pose.orientation.x, camera_pose.pose.orientation.y);
+        camera_pose.pose.orientation.z = -camera_pose.pose.orientation.z;
+        camera_pose.pose.position.z = -camera_pose.pose.position.z;
     }
-    return odom_tf;
+    return camera_pose;
 }
 
 airsim_ros_pkgs::GPSYaw AirsimROSWrapper::get_gps_msg_from_airsim_geo_point(const msr::airlib::GeoPoint& geo_point) const

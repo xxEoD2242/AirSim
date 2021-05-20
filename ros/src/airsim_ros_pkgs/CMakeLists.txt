@@ -19,7 +19,7 @@ set(RPC_LIB rpc) # name of .a file with lib prefix
 message(STATUS "found RPC_LIB_INCLUDES=${RPC_LIB_INCLUDES}")
 
 # todo eigen3 in AirLib already
-# find_package(Eigen3 REQUIRED) 
+find_package(Eigen3 REQUIRED) 
 find_package(Boost REQUIRED)
 find_package(OpenCV REQUIRED)
 
@@ -76,6 +76,7 @@ generate_messages(
 
 catkin_package(
   INCLUDE_DIRS include
+  DEPENDS Eigen
   # LIBRARIES airsim_ros
   CATKIN_DEPENDS message_runtime roscpp std_msgs # nodelet 
 )
@@ -90,6 +91,7 @@ include_directories(
   ${AIRSIM_ROOT}/MavLinkCom/common_utils
   ${OpenCV_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
+  ${Eigen_INCLUDE_DIRS}
 )
 
 add_library(airsim_settings_parser src/airsim_settings_parser.cpp)
