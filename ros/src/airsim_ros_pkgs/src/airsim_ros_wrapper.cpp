@@ -159,7 +159,7 @@ void AirsimROSWrapper::create_ros_pubs_from_settings_json()
 
         vehicle_ros->odom_local_pub = nh_private_.advertise<nav_msgs::Odometry>(curr_vehicle_name + "/" + odom_frame_id_, 10);
 
-        depth_cam_pub = nh_private_.advertise<geometry_msgs::PoseStamped>(curr_vehicle_name + "/" + "front_center_custom" + "/pose", 10);
+        vehicle_ros->depth_cam_pub = nh_private_.advertise<geometry_msgs::PoseStamped>(curr_vehicle_name + "/" + "front_center_custom" + "/pose", 10);
 
         vehicle_ros->env_pub = nh_private_.advertise<airsim_ros_pkgs::Environment>(curr_vehicle_name + "/environment", 10);
 
@@ -1197,7 +1197,7 @@ void AirsimROSWrapper::publish_vehicle_state()
         publish_world_to_vehicle_tf(vehicle_ros->curr_odom);
 
         ros::Time ros_timestamp = airsim_timestamp_to_ros(vehicle_ros->stamp);
-        depth_cam_pub.publish(build_camera_pose(ros_timestamp, vehicle_ros->curr_odom, "fron_center_custom_body"));
+        vehicle_ros->depth_cam_pub.publish(build_camera_pose(ros_timestamp, vehicle_ros->curr_odom, "fron_center_custom_body"));
 
         // ground truth GPS position from sim/HITL
         vehicle_ros->global_gps_pub.publish(vehicle_ros->gps_sensor_msg);
