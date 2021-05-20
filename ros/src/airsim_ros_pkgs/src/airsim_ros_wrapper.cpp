@@ -101,9 +101,11 @@ void AirsimROSWrapper::initialize_ros()
     nh_private_.getParam("update_airsim_control_every_n_sec", update_airsim_control_every_n_sec);
     nh_private_.getParam("publish_clock", publish_clock_);
     nh_private_.param("world_frame_id", world_frame_id_, world_frame_id_);
-    odom_frame_id_ = world_frame_id_ == AIRSIM_FRAME_ID ? AIRSIM_ODOM_FRAME_ID : ENU_ODOM_FRAME_ID;
+    // odom_frame_id_ = world_frame_id_ == AIRSIM_FRAME_ID ? AIRSIM_ODOM_FRAME_ID : ENU_ODOM_FRAME_ID;
+    world_frame_id_ = "world";
+    odom_frame_id_ = "odom_local_en";
     nh_private_.param("odom_frame_id", odom_frame_id_, odom_frame_id_);
-    isENU_ = !(odom_frame_id_ == AIRSIM_ODOM_FRAME_ID);
+    // isENU_ = !(odom_frame_id_ == AIRSIM_ODOM_FRAME_ID);
     nh_private_.param("coordinate_system_enu", isENU_, isENU_);
     vel_cmd_duration_ = 0.05; // todo rosparam
     // todo enforce dynamics constraints in this node as well?
@@ -965,7 +967,7 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     
     geometry_msgs::PoseStamped odom_tf;
     odom_tf.header.stamp = time;
-    odom_tf.header.frame_id = frame_id;
+    odom_tf.header.frame_id = "/map";
     odom_tf.pose.position.x = img_response.camera_position.x();
     odom_tf.pose.position.y = img_response.camera_position.y();
     odom_tf.pose.position.z = img_response.camera_position.z();
