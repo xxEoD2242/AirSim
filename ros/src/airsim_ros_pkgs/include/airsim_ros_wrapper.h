@@ -166,6 +166,7 @@ private:
         /// All things ROS
         ros::Publisher odom_local_pub;
         ros::Publisher global_gps_pub;
+        ros::Publisher depth_cam_pub;
         ros::Publisher env_pub;
         airsim_ros_pkgs::Environment env_msg;
         std::vector<SensorPublisher> sensor_pubs;

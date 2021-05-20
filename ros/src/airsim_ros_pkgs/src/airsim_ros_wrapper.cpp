@@ -159,6 +159,8 @@ void AirsimROSWrapper::create_ros_pubs_from_settings_json()
 
         vehicle_ros->odom_local_pub = nh_private_.advertise<nav_msgs::Odometry>(curr_vehicle_name + "/" + odom_frame_id_, 10);
 
+        depth_cam_pub = nh_private_.advertise<geometry_msgs::PoseStamped>(curr_vehicle_name + "/" + "front_center_custom" + "/pose", 10);
+
         vehicle_ros->env_pub = nh_private_.advertise<airsim_ros_pkgs::Environment>(curr_vehicle_name + "/environment", 10);
 
         vehicle_ros->global_gps_pub = nh_private_.advertise<sensor_msgs::NavSatFix>(curr_vehicle_name + "/global_gps", 10);
@@ -223,7 +225,7 @@ void AirsimROSWrapper::create_ros_pubs_from_settings_json()
 
                     image_pub_vec_.push_back(image_transporter.advertise(curr_vehicle_name + "/" + curr_camera_name + "/" + image_type_int_to_string_map_.at(capture_setting.image_type), 1));
                     cam_info_pub_vec_.push_back(nh_private_.advertise<sensor_msgs::CameraInfo> (curr_vehicle_name + "/" + curr_camera_name + "/camera_info", 10));
-                    cam_pose_pub_vec_.push_back(nh_private_.advertise<geometry_msgs::PoseStamped>(curr_vehicle_name + "/" + curr_camera_name + "/pose", 10));
+                    //cam_pose_pub_vec_.push_back(nh_private_.advertise<geometry_msgs::PoseStamped>(curr_vehicle_name + "/" + curr_camera_name + "/pose", 10));
                     camera_info_msg_vec_.push_back(generate_cam_info(curr_camera_name, camera_setting, capture_setting));
                 }
             }
@@ -950,7 +952,7 @@ void AirsimROSWrapper::publish_world_to_vehicle_tf(const nav_msgs::Odometry& odo
     tf_broadcaster_.sendTransform(odom_tf);
 }
 
-geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, const ImageResponse& img_response, const std::string& frame_id) const
+geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, const nav_msgs::Odometry& odom_msg, const std::string& frame_id) const
 {
     // Camera pose is given from AirSim in NED
     /* geometry_msgs::TransformStamped cam_tf_body_msg;
@@ -968,13 +970,13 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     geometry_msgs::PoseStamped camera_pose;
     camera_pose.header.stamp = time;
     camera_pose.header.frame_id = "world";
-    camera_pose.pose.position.x = img_response.camera_position.x();
-    camera_pose.pose.position.y = img_response.camera_position.y();
-    camera_pose.pose.position.z = img_response.camera_position.z();
-    camera_pose.pose.orientation.x = img_response.camera_orientation.x();
-    camera_pose.pose.orientation.y = img_response.camera_orientation.y();
-    camera_pose.pose.orientation.z = img_response.camera_orientation.z();
-    camera_pose.pose.orientation.w = img_response.camera_orientation.w();
+    camera_pose.pose.position.x = odom_msg.pose.pose.position.x;
+    camera_pose.pose.position.y = odom_msg.pose.pose.position.y;
+    camera_pose.pose.position.z = odom_msg.pose.pose.position.z;
+    camera_pose.pose.orientation.x = odom_msg.pose.pose.orientation.x;
+    camera_pose.pose.orientation.y = odom_msg.pose.pose.orientation.y;
+    camera_pose.pose.orientation.z = odom_msg.pose.pose.orientation.z;
+    camera_pose.pose.orientation.w = odom_msg.pose.pose.orientation.w;
     
 
     /*tf2::Quaternion quat_cam_body;
@@ -1004,13 +1006,13 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     quat_cam_optical.normalize();
     tf2::convert(quat_cam_optical, camera_pose.pose.orientation); */
 
-    if (isENU_)
+    /* if (isENU_)
     {
         std::swap(camera_pose.pose.position.x, camera_pose.pose.position.y);
         std::swap(camera_pose.pose.orientation.x, camera_pose.pose.orientation.y);
         camera_pose.pose.orientation.z = -camera_pose.pose.orientation.z;
         camera_pose.pose.position.z = -camera_pose.pose.position.z;
-    }
+    } */
     return camera_pose;
 }
 
@@ -1193,6 +1195,9 @@ void AirsimROSWrapper::publish_vehicle_state()
         vehicle_ros->odom_local_pub.publish(vehicle_ros->curr_odom);
         publish_odom_tf(vehicle_ros->curr_odom);
         publish_world_to_vehicle_tf(vehicle_ros->curr_odom);
+
+        ros::Time ros_timestamp = airsim_timestamp_to_ros(vehicle_ros->stamp);
+        depth_cam_pub.publish(build_camera_pose(ros_timestamp, vehicle_ros->curr_odom, "fron_center_custom_body"));
 
         // ground truth GPS position from sim/HITL
         vehicle_ros->global_gps_pub.publish(vehicle_ros->gps_sensor_msg);
@@ -1422,7 +1427,7 @@ void AirsimROSWrapper::append_static_camera_tf(VehicleROS* vehicle_ros, const st
     tf2::convert(static_cam_tf_body_msg.transform.rotation, quat_cam_body);
     tf2::Matrix3x3 mat_cam_body(quat_cam_body);
     tf2::Matrix3x3 mat_cam_optical;
-    if (!isENU_)
+    if (isENU_)
     {
         // ENU rotation for the Tait-Bryan angles
     mat_cam_optical.setValue(mat_cam_body.getColumn(1).getY(), mat_cam_body.getColumn(2).getY(), mat_cam_body.getColumn(0).getY(),
@@ -1573,7 +1578,7 @@ void AirsimROSWrapper::process_and_publish_img_response(const std::vector<ImageR
 
         camera_info_msg_vec_[img_response_idx_internal].header.stamp = ros_timestamp;
         cam_info_pub_vec_[img_response_idx_internal].publish(camera_info_msg_vec_[img_response_idx_internal]);
-        cam_pose_pub_vec_[img_response_idx_internal].publish(build_camera_pose(ros_timestamp, curr_img_response, curr_img_response.camera_name + "_body"));
+        
 
         // DepthPlanar / DepthPerspective / DepthVis / DisparityNormalized
         if (curr_img_response.pixels_as_float)
@@ -1632,7 +1637,7 @@ void AirsimROSWrapper::publish_camera_tf(const ImageResponse& img_response, cons
     // tf2::Matrix3x3 mat_cam_optical = matrix_cam_body_to_optical_ * mat_cam_body * matrix_cam_body_to_optical_inverse_;
     // tf2::Matrix3x3 mat_cam_optical = matrix_cam_body_to_optical_ * mat_cam_body;
     tf2::Matrix3x3 mat_cam_optical;
-    if (!isENU_)
+    if (isENU_)
     {
         // ENU rotation of the optical frame
     mat_cam_optical.setValue(mat_cam_body.getColumn(1).getY(), mat_cam_body.getColumn(2).getY(), mat_cam_body.getColumn(0).getY(),
