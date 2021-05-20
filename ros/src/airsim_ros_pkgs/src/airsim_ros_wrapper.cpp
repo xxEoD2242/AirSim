@@ -988,7 +988,7 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
                              -mat_cam_body.getColumn(1).getZ(), -mat_cam_body.getColumn(2).getZ(), -mat_cam_body.getColumn(0).getZ());
     mat_cam_optical.getRotation(quat_cam_optical);
     quat_cam_optical.normalize();
-    tf2::convert(quat_cam_optical, camera_pose.pose.orientation);*/
+    tf2::convert(quat_cam_optical, camera_pose.pose.orientation);
 
     if(isENU_)
     {
@@ -996,7 +996,7 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
         std::swap(camera_pose.pose.orientation.x, camera_pose.pose.orientation.y);
         camera_pose.pose.orientation.z = -camera_pose.pose.orientation.z;
         camera_pose.pose.position.z = -camera_pose.pose.position.z;
-    }
+    } */
     return camera_pose;
 }
 
@@ -1526,7 +1526,7 @@ sensor_msgs::CameraInfo AirsimROSWrapper::generate_cam_info(const std::string& c
                                                             const CaptureSetting& capture_setting) const
 {
     sensor_msgs::CameraInfo cam_info_msg;
-    cam_info_msg.header.frame_id = camera_name;
+    cam_info_msg.header.frame_id = camera_name + "_optical";
     cam_info_msg.height = capture_setting.height;
     cam_info_msg.width = capture_setting.width;
     float f_x = (capture_setting.width / 2.0) / tan(math_common::deg2rad(capture_setting.fov_degrees / 2.0));
