@@ -980,7 +980,7 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
                              mat_cam_body.getColumn(1).getZ(), mat_cam_body.getColumn(2).getZ(), mat_cam_body.getColumn(0).getZ());
     mat_cam_optical.getRotation(quat_cam_optical);
     quat_cam_optical.normalize();
-    tf2::convert(quat_cam_optical, odom_tf.pose.quaternion);
+    tf2::convert(quat_cam_optical, odom_tf.pose.orientation);
 
     /* if (isENU_)
     {
