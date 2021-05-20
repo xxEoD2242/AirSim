@@ -977,7 +977,7 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     camera_pose.pose.orientation.w = img_response.camera_orientation.w();
     
 
-    tf2::Quaternion quat_cam_body;
+    /*tf2::Quaternion quat_cam_body;
     tf2::Quaternion quat_cam_optical;
     tf2::convert(cam_tf_body_msg.transform.rotation, quat_cam_body);
     tf2::Matrix3x3 mat_cam_body(quat_cam_body);
@@ -988,15 +988,15 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
                              -mat_cam_body.getColumn(1).getZ(), -mat_cam_body.getColumn(2).getZ(), -mat_cam_body.getColumn(0).getZ());
     mat_cam_optical.getRotation(quat_cam_optical);
     quat_cam_optical.normalize();
-    tf2::convert(quat_cam_optical, camera_pose.pose.orientation);
+    tf2::convert(quat_cam_optical, camera_pose.pose.orientation);*/
 
-    /* if (isENU_)
+    (isENU_)
     {
         std::swap(camera_pose.pose.position.x, camera_pose.pose.position.y);
         std::swap(camera_pose.pose.orientation.x, camera_pose.pose.orientation.y);
         camera_pose.pose.orientation.z = -camera_pose.pose.orientation.z;
         camera_pose.pose.position.z = -camera_pose.pose.position.z;
-    } */
+    }
     return camera_pose;
 }
 
