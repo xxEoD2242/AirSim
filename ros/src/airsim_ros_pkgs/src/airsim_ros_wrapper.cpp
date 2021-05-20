@@ -987,14 +987,9 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     // convert to cam pose
     cam2world = body_pose * cam02body;
     cam2world_quat = cam2world.block<3, 3>(0, 0);
-    last_odom_stamp = odom.header.stamp;
 
-    last_pose_world(0) = odom.pose.pose.position.x;
-    last_pose_world(1) = odom.pose.pose.position.y;
-    last_pose_world(2) = odom.pose.pose.position.z;
-
-    geometry_msgs::PoseStamped odom_tf;
-    camera_pose.header = _odom.header;
+    geometry_msgs::PoseStamped camera_pose;
+    camera_pose.header.stamp = time;
     camera_pose.header.frame_id = "/map";
     camera_pose.pose.position.x = cam2world(0, 3);
     camera_pose.pose.position.y = cam2world(1, 3);

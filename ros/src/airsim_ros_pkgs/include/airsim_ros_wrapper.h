@@ -67,6 +67,7 @@ STRICT_MODE_ON
 // #include "nodelet/nodelet.h"
 
 using namespace Eigen;
+using namespace std;
 
 // todo move airlib typedefs to separate header file?
 typedef msr::airlib::ImageCaptureBase::ImageRequest ImageRequest;
