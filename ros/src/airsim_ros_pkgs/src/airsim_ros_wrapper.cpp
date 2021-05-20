@@ -1196,8 +1196,8 @@ void AirsimROSWrapper::publish_vehicle_state()
         publish_odom_tf(vehicle_ros->curr_odom);
         publish_world_to_vehicle_tf(vehicle_ros->curr_odom);
 
-        ros::Time ros_timestamp = airsim_timestamp_to_ros(vehicle_ros->stamp);
-        vehicle_ros->depth_cam_pub.publish(build_camera_pose(ros_timestamp, vehicle_ros->curr_odom, "fron_center_custom_body"));
+        // ros::Time ros_timestamp = airsim_timestamp_to_ros();
+        vehicle_ros->depth_cam_pub.publish(build_camera_pose(vehicle_ros->stamp, vehicle_ros->curr_odom, "fron_center_custom_body"));
 
         // ground truth GPS position from sim/HITL
         vehicle_ros->global_gps_pub.publish(vehicle_ros->gps_sensor_msg);
