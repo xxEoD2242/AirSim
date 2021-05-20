@@ -103,7 +103,7 @@ void AirsimROSWrapper::initialize_ros()
     nh_private_.param("world_frame_id", world_frame_id_, world_frame_id_);
     // odom_frame_id_ = world_frame_id_ == AIRSIM_FRAME_ID ? AIRSIM_ODOM_FRAME_ID : ENU_ODOM_FRAME_ID;
     world_frame_id_ = "world";
-    odom_frame_id_ = "odom_local_enu";
+    odom_frame_id_ = "odom_local_ned";
     nh_private_.param("odom_frame_id", odom_frame_id_, odom_frame_id_);
     // isENU_ = !(odom_frame_id_ == AIRSIM_ODOM_FRAME_ID);
     nh_private_.param("coordinate_system_enu", isENU_, isENU_);
@@ -953,7 +953,7 @@ void AirsimROSWrapper::publish_world_to_vehicle_tf(const nav_msgs::Odometry& odo
 geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, const ImageResponse& img_response, const std::string& frame_id) const
 {
     // Camera pose is given from AirSim in NED
-    geometry_msgs::TransformStamped cam_tf_body_msg;
+    /* geometry_msgs::TransformStamped cam_tf_body_msg;
     cam_tf_body_msg.header.stamp = time;
     cam_tf_body_msg.header.frame_id = frame_id;
     cam_tf_body_msg.child_frame_id = "camera_body";
@@ -963,11 +963,11 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     cam_tf_body_msg.transform.rotation.x = img_response.camera_orientation.x();
     cam_tf_body_msg.transform.rotation.y = img_response.camera_orientation.y();
     cam_tf_body_msg.transform.rotation.z = img_response.camera_orientation.z();
-    cam_tf_body_msg.transform.rotation.w = img_response.camera_orientation.w();
+    cam_tf_body_msg.transform.rotation.w = img_response.camera_orientation.w(); */
     
     geometry_msgs::PoseStamped camera_pose;
     camera_pose.header.stamp = time;
-    camera_pose.header.frame_id = "/map";
+    camera_pose.header.frame_id = "world";
     camera_pose.pose.position.x = img_response.camera_position.x();
     camera_pose.pose.position.y = img_response.camera_position.y();
     camera_pose.pose.position.z = img_response.camera_position.z();
