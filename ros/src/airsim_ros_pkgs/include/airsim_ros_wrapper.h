@@ -366,6 +366,7 @@ private:
     tf2_ros::StaticTransformBroadcaster static_tf_pub_;
 
     Matrix4d cam02body;
+    Eigen::Quaterniond cam2world_quat;
 
     bool isENU_ = true;
     tf2_ros::Buffer tf_buffer_;
