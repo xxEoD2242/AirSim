@@ -988,7 +988,7 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
 
     // TODO: Invert this matrix to transform from the camera frame to the regular world
 
-    if (!isENU_)
+    if (isENU_)
     {
         // ENU rotation for the Tait-Bryan angles
     mat_cam_optical.setValue(mat_cam_body.getColumn(1).getY(), mat_cam_body.getColumn(2).getY(), mat_cam_body.getColumn(0).getY(),
