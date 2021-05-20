@@ -62,15 +62,9 @@ STRICT_MODE_ON
 #include <tf2_ros/transform_listener.h>
 #include <tf2/convert.h>
 #include <Eigen/Eigen>
-#include <iostream>
-#include <fstream>
-#include <vector>
 #include <unordered_map>
 #include <memory>
 // #include "nodelet/nodelet.h"
-
-using namespace Eigen;
-using namespace std;
 
 // todo move airlib typedefs to separate header file?
 typedef msr::airlib::ImageCaptureBase::ImageRequest ImageRequest;
@@ -367,9 +361,6 @@ private:
     std::string odom_frame_id_ = AIRSIM_ODOM_FRAME_ID;
     tf2_ros::TransformBroadcaster tf_broadcaster_;
     tf2_ros::StaticTransformBroadcaster static_tf_pub_;
-
-    Matrix4d cam02body;
-    Eigen::Quaterniond cam2world_quat;
 
     bool isENU_ = true;
     tf2_ros::Buffer tf_buffer_;

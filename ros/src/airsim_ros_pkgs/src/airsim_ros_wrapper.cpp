@@ -103,7 +103,7 @@ void AirsimROSWrapper::initialize_ros()
     nh_private_.param("world_frame_id", world_frame_id_, world_frame_id_);
     // odom_frame_id_ = world_frame_id_ == AIRSIM_FRAME_ID ? AIRSIM_ODOM_FRAME_ID : ENU_ODOM_FRAME_ID;
     world_frame_id_ = "world";
-    odom_frame_id_ = "odom_local_en";
+    odom_frame_id_ = "odom_local_enu";
     nh_private_.param("odom_frame_id", odom_frame_id_, odom_frame_id_);
     // isENU_ = !(odom_frame_id_ == AIRSIM_ODOM_FRAME_ID);
     nh_private_.param("coordinate_system_enu", isENU_, isENU_);
@@ -953,7 +953,7 @@ void AirsimROSWrapper::publish_world_to_vehicle_tf(const nav_msgs::Odometry& odo
 geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, const ImageResponse& img_response, const std::string& frame_id) const
 {
     
-    /* geometry_msgs::TransformStamped cam_tf_body_msg;
+    geometry_msgs::TransformStamped cam_tf_body_msg;
     cam_tf_body_msg.header.stamp = time;
     cam_tf_body_msg.header.frame_id = frame_id;]
     cam_tf_body_msg.child_frame_id = "camera_body";
@@ -963,73 +963,39 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     cam_tf_body_msg.transform.rotation.x = img_response.camera_orientation.x();
     cam_tf_body_msg.transform.rotation.y = img_response.camera_orientation.y();
     cam_tf_body_msg.transform.rotation.z = img_response.camera_orientation.z();
-    cam_tf_body_msg.transform.rotation.w = img_response.camera_orientation.w(); */
-
-    cam02body << 0.0, 0.0, 1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0;
-
-    Matrix4d Pose_receive = Matrix4d::Identity();
-
-    Eigen::Vector3d request_position;
-    Eigen::Quaterniond request_pose;
-    request_position.x() = img_response.camera_position.x();
-    request_position.y() = img_response.camera_position.y();
-    request_position.z() = img_response.camera_position.z();
-    request_pose.x() = img_response.camera_orientation.x();
-    request_pose.y() = img_response.camera_orientation.y();
-    request_pose.z() = img_response.camera_orientation.z();
-    request_pose.w() = img_response.camera_orientation.w();
-    Pose_receive.block<3, 3>(0, 0) = request_pose.toRotationMatrix();
-    Pose_receive(0, 3) = request_position(0);
-    Pose_receive(1, 3) = request_position(1);
-    Pose_receive(2, 3) = request_position(2);
-
-    Matrix4d body_pose = Pose_receive;
-    // convert to cam pose
-    cam2world = body_pose * cam02body;
-    cam2world_quat = cam2world.block<3, 3>(0, 0);
-
+    cam_tf_body_msg.transform.rotation.w = img_response.camera_orientation.w();
+    
     geometry_msgs::PoseStamped camera_pose;
     camera_pose.header.stamp = time;
     camera_pose.header.frame_id = "/map";
-    camera_pose.pose.position.x = cam2world(0, 3);
-    camera_pose.pose.position.y = cam2world(1, 3);
-    camera_pose.pose.position.z = cam2world(2, 3);
-    camera_pose.pose.orientation.w = cam2world_quat.w();
-    camera_pose.pose.orientation.x = cam2world_quat.x();
-    camera_pose.pose.orientation.y = cam2world_quat.y();
-    camera_pose.pose.orientation.z = cam2world_quat.z();
-    
-    /* geometry_msgs::PoseStamped odom_tf;
-    odom_tf.header.stamp = time;
-    odom_tf.header.frame_id = "/map";
-    odom_tf.pose.position.x = img_response.camera_position.x();
-    odom_tf.pose.position.y = img_response.camera_position.y();
-    odom_tf.pose.position.z = img_response.camera_position.z();
-    odom_tf.pose.orientation.x = img_response.camera_orientation.x();
-    odom_tf.pose.orientation.y = img_response.camera_orientation.y();
-    odom_tf.pose.orientation.z = img_response.camera_orientation.z();
-    odom_tf.pose.orientation.w = img_response.camera_orientation.w(); */
+    camera_pose.pose.position.x = img_response.camera_position.x();
+    camera_pose.pose.position.y = img_response.camera_position.y();
+    camera_pose.pose.position.z = img_response.camera_position.z();
+    camera_pose.pose.orientation.x = img_response.camera_orientation.x();
+    camera_pose.pose.orientation.y = img_response.camera_orientation.y();
+    camera_pose.pose.orientation.z = img_response.camera_orientation.z();
+    camera_pose.pose.orientation.w = img_response.camera_orientation.w();
     
 
-    /* tf2::Quaternion quat_cam_body;
+    tf2::Quaternion quat_cam_body;
     tf2::Quaternion quat_cam_optical;
     tf2::convert(cam_tf_body_msg.transform.rotation, quat_cam_body);
     tf2::Matrix3x3 mat_cam_body(quat_cam_body);
     tf2::Matrix3x3 mat_cam_optical;
-    mat_cam_optical.setValue(mat_cam_body.getColumn(1).getY(), mat_cam_body.getColumn(2).getY(), mat_cam_body.getColumn(0).getY(),
-                             mat_cam_body.getColumn(1).getX(), mat_cam_body.getColumn(2).getX(), mat_cam_body.getColumn(0).getX(),
-                             -mat_cam_body.getColumn(1).getZ(), -mat_cam_body.getColumn(2).getZ(), -mat_cam_body.getColumn(0).getZ());
+    mat_cam_optical.setValue(mat_cam_body.getColumn(1).getX(), mat_cam_body.getColumn(2).getX(), mat_cam_body.getColumn(0).getX(),
+                             mat_cam_body.getColumn(1).getY(), mat_cam_body.getColumn(2).getY(), mat_cam_body.getColumn(0).getY(),
+                             mat_cam_body.getColumn(1).getZ(), mat_cam_body.getColumn(2).getZ(), mat_cam_body.getColumn(0).getZ());
     mat_cam_optical.getRotation(quat_cam_optical);
     quat_cam_optical.normalize();
-    tf2::convert(quat_cam_optical, odom_tf.pose.orientation); */
+    tf2::convert(quat_cam_optical, camera_pose.pose.orientation);
 
-    if (isENU_)
+    /* if (isENU_)
     {
         std::swap(camera_pose.pose.position.x, camera_pose.pose.position.y);
         std::swap(camera_pose.pose.orientation.x, camera_pose.pose.orientation.y);
         camera_pose.pose.orientation.z = -camera_pose.pose.orientation.z;
         camera_pose.pose.position.z = -camera_pose.pose.position.z;
-    }
+    } */
     return camera_pose;
 }
 
