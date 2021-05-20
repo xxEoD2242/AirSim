@@ -952,7 +952,7 @@ void AirsimROSWrapper::publish_world_to_vehicle_tf(const nav_msgs::Odometry& odo
 
 geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, const ImageResponse& img_response, const std::string& frame_id) const
 {
-    
+    // Camera pose is given from AirSim in NED
     geometry_msgs::TransformStamped cam_tf_body_msg;
     cam_tf_body_msg.header.stamp = time;
     cam_tf_body_msg.header.frame_id = frame_id;
@@ -982,9 +982,10 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     tf2::convert(cam_tf_body_msg.transform.rotation, quat_cam_body);
     tf2::Matrix3x3 mat_cam_body(quat_cam_body);
     tf2::Matrix3x3 mat_cam_optical;
-    mat_cam_optical.setValue(mat_cam_body.getColumn(1).getX(), mat_cam_body.getColumn(2).getX(), mat_cam_body.getColumn(0).getX(),
-                             mat_cam_body.getColumn(1).getY(), mat_cam_body.getColumn(2).getY(), mat_cam_body.getColumn(0).getY(),
-                             mat_cam_body.getColumn(1).getZ(), mat_cam_body.getColumn(2).getZ(), mat_cam_body.getColumn(0).getZ());
+    // Compute the transform from NED to ENU (swap X and Y and negate Z)
+    mat_cam_optical.setValue(mat_cam_body.getColumn(1).getY(), mat_cam_body.getColumn(2).getY(), mat_cam_body.getColumn(0).getY(),
+                             mat_cam_body.getColumn(1).getX(), mat_cam_body.getColumn(2).getX(), mat_cam_body.getColumn(0).getX(),
+                             -mat_cam_body.getColumn(1).getZ(), -mat_cam_body.getColumn(2).getZ(), -mat_cam_body.getColumn(0).getZ());
     mat_cam_optical.getRotation(quat_cam_optical);
     quat_cam_optical.normalize();
     tf2::convert(quat_cam_optical, camera_pose.pose.orientation);
