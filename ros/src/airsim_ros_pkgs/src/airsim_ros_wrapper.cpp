@@ -955,17 +955,17 @@ void AirsimROSWrapper::publish_world_to_vehicle_tf(const nav_msgs::Odometry& odo
 geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, const nav_msgs::Odometry& odom_msg, const std::string& frame_id) const
 {
     // Camera pose is given from AirSim in NED
-    /* geometry_msgs::TransformStamped cam_tf_body_msg;
+    geometry_msgs::TransformStamped cam_tf_body_msg;
     cam_tf_body_msg.header.stamp = time;
     cam_tf_body_msg.header.frame_id = frame_id;
     cam_tf_body_msg.child_frame_id = "camera_body";
-    cam_tf_body_msg.transform.translation.x = img_response.camera_position.x();
-    cam_tf_body_msg.transform.translation.y = img_response.camera_position.y();
-    cam_tf_body_msg.transform.translation.z = img_response.camera_position.z();
-    cam_tf_body_msg.transform.rotation.x = img_response.camera_orientation.x();
-    cam_tf_body_msg.transform.rotation.y = img_response.camera_orientation.y();
-    cam_tf_body_msg.transform.rotation.z = img_response.camera_orientation.z();
-    cam_tf_body_msg.transform.rotation.w = img_response.camera_orientation.w(); */
+    cam_tf_body_msg.transform.translation.x = odom_msg.pose.pose.position.x;
+    cam_tf_body_msg.transform.translation.y = odom_msg.pose.pose.position.y;
+    cam_tf_body_msg.transform.translation.z = odom_msg.pose.pose.position.z;
+    cam_tf_body_msg.transform.rotation.x = odom_msg.pose.pose.orientation.x;
+    cam_tf_body_msg.transform.rotation.y = odom_msg.pose.pose.orientation.y;
+    cam_tf_body_msg.transform.rotation.z = odom_msg.pose.pose.orientation.z;
+    cam_tf_body_msg.transform.rotation.w = odom_msg.pose.pose.orientation.w;
     
     geometry_msgs::PoseStamped camera_pose;
     camera_pose.header.stamp = time;
@@ -973,13 +973,13 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     camera_pose.pose.position.x = odom_msg.pose.pose.position.x;
     camera_pose.pose.position.y = odom_msg.pose.pose.position.y;
     camera_pose.pose.position.z = odom_msg.pose.pose.position.z;
-    camera_pose.pose.orientation.x = odom_msg.pose.pose.orientation.x;
-    camera_pose.pose.orientation.y = odom_msg.pose.pose.orientation.y;
-    camera_pose.pose.orientation.z = odom_msg.pose.pose.orientation.z;
-    camera_pose.pose.orientation.w = odom_msg.pose.pose.orientation.w;
+    //camera_pose.pose.orientation.x = odom_msg.pose.pose.orientation.x;
+    //camera_pose.pose.orientation.y = odom_msg.pose.pose.orientation.y;
+    //camera_pose.pose.orientation.z = odom_msg.pose.pose.orientation.z;
+    //camera_pose.pose.orientation.w = odom_msg.pose.pose.orientation.w;
     
 
-    /*tf2::Quaternion quat_cam_body;
+    tf2::Quaternion quat_cam_body;
     tf2::Quaternion quat_cam_optical;
     tf2::convert(cam_tf_body_msg.transform.rotation, quat_cam_body);
     tf2::Matrix3x3 mat_cam_body(quat_cam_body);
@@ -991,9 +991,9 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     if (!isENU_)
     {
         // ENU rotation for the Tait-Bryan angles
-    mat_cam_optical.setValue(-mat_cam_body.getColumn(1).getY(), -mat_cam_body.getColumn(2).getY(), -mat_cam_body.getColumn(0).getY(),
-                             -mat_cam_body.getColumn(1).getX(), -mat_cam_body.getColumn(2).getX(), -mat_cam_body.getColumn(0).getX(),
-                             mat_cam_body.getColumn(1).getZ(), mat_cam_body.getColumn(2).getZ(), mat_cam_body.getColumn(0).getZ());
+    mat_cam_optical.setValue(mat_cam_body.getColumn(1).getY(), mat_cam_body.getColumn(2).getY(), mat_cam_body.getColumn(0).getY(),
+                             mat_cam_body.getColumn(1).getX(), mat_cam_body.getColumn(2).getX(), mat_cam_body.getColumn(0).getX(),
+                             -mat_cam_body.getColumn(1).getZ(), -mat_cam_body.getColumn(2).getZ(), -mat_cam_body.getColumn(0).getZ());
     }
     else
     {
@@ -1004,7 +1004,7 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     }
     mat_cam_optical.getRotation(quat_cam_optical);
     quat_cam_optical.normalize();
-    tf2::convert(quat_cam_optical, camera_pose.pose.orientation); */
+    tf2::convert(quat_cam_optical, camera_pose.pose.orientation);
 
     /* if (isENU_)
     {
