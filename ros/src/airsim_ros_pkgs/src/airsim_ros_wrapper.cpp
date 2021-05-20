@@ -103,7 +103,7 @@ void AirsimROSWrapper::initialize_ros()
     nh_private_.param("world_frame_id", world_frame_id_, world_frame_id_);
     // odom_frame_id_ = world_frame_id_ == AIRSIM_FRAME_ID ? AIRSIM_ODOM_FRAME_ID : ENU_ODOM_FRAME_ID;
     world_frame_id_ = "world";
-    odom_frame_id_ = "odom_local_ned";
+    odom_frame_id_ = "odom_local_enu";
     nh_private_.param("odom_frame_id", odom_frame_id_, odom_frame_id_);
     // isENU_ = !(odom_frame_id_ == AIRSIM_ODOM_FRAME_ID);
     nh_private_.param("coordinate_system_enu", isENU_, isENU_);
@@ -983,20 +983,34 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     tf2::Matrix3x3 mat_cam_body(quat_cam_body);
     tf2::Matrix3x3 mat_cam_optical;
     // Compute the transform from NED to ENU (swap X and Y and negate Z)
-    mat_cam_optical.setValue(mat_cam_body.getColumn(1).getY(), mat_cam_body.getColumn(2).getY(), mat_cam_body.getColumn(0).getY(),
-                             mat_cam_body.getColumn(1).getX(), mat_cam_body.getColumn(2).getX(), mat_cam_body.getColumn(0).getX(),
-                             -mat_cam_body.getColumn(1).getZ(), -mat_cam_body.getColumn(2).getZ(), -mat_cam_body.getColumn(0).getZ());
+
+    // TODO: Invert this matrix to transform from the camera frame to the regular world
+
+    if (!isENU_)
+    {
+        // ENU rotation for the Tait-Bryan angles
+    mat_cam_optical.setValue(-mat_cam_body.getColumn(1).getY(), -mat_cam_body.getColumn(2).getY(), -mat_cam_body.getColumn(0).getY(),
+                             -mat_cam_body.getColumn(1).getX(), -mat_cam_body.getColumn(2).getX(), -mat_cam_body.getColumn(0).getX(),
+                             mat_cam_body.getColumn(1).getZ(), mat_cam_body.getColumn(2).getZ(), mat_cam_body.getColumn(0).getZ());
+    }
+    else
+    {
+        // Standard rotation to the Tait-Bryan Euler angles
+    mat_cam_optical.setValue(mat_cam_body.getColumn(1).getX(), mat_cam_body.getColumn(2).getX(), mat_cam_body.getColumn(0).getX(),
+                             mat_cam_body.getColumn(1).getY(), mat_cam_body.getColumn(2).getY(), mat_cam_body.getColumn(0).getY(),
+                             mat_cam_body.getColumn(1).getZ(), mat_cam_body.getColumn(2).getZ(), mat_cam_body.getColumn(0).getZ());
+    }
     mat_cam_optical.getRotation(quat_cam_optical);
     quat_cam_optical.normalize();
-    tf2::convert(quat_cam_optical, camera_pose.pose.orientation);
+    tf2::convert(quat_cam_optical, camera_pose.pose.orientation); */
 
-    if(isENU_)
+    if (isENU_)
     {
         std::swap(camera_pose.pose.position.x, camera_pose.pose.position.y);
         std::swap(camera_pose.pose.orientation.x, camera_pose.pose.orientation.y);
         camera_pose.pose.orientation.z = -camera_pose.pose.orientation.z;
         camera_pose.pose.position.z = -camera_pose.pose.position.z;
-    } */
+    }
     return camera_pose;
 }
 
