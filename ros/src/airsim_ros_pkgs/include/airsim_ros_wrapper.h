@@ -62,6 +62,9 @@ STRICT_MODE_ON
 #include <tf2_ros/transform_listener.h>
 #include <tf2/convert.h>
 #include <Eigen/Eigen>
+#include <iostream>
+#include <fstream>
+#include <vector>
 #include <unordered_map>
 #include <memory>
 // #include "nodelet/nodelet.h"
