@@ -1,6 +1,4 @@
 import rospy
-import math
-import tf
 from airsim_ros_pkgs.srv import SetLocalPosition
 
 if __name__ == '__main__':
