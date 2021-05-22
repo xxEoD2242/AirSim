@@ -16,7 +16,7 @@ bool PIDParams::load_from_rosparams(const ros::NodeHandle &nh)
 
     found = found && nh.getParam("reached_thresh_xyz", reached_thresh_xyz);
     found = found && nh.getParam("reached_yaw_degrees", reached_yaw_degrees);
-    found = found && nh.getParam("drone_name", drone_name)
+    found = found && nh.getParam("drone_name", drone_name);
 
     return found;
 }
