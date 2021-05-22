@@ -570,6 +570,8 @@ void AirsimROSWrapper::vel_cmd_world_frame_cb(const airsim_ros_pkgs::VelCmd::Con
 
     auto drone = static_cast<MultiRotorROS*>(vehicle_name_ptr_map_[vehicle_name].get());
 
+    ROS_INFO("Received a Vel Command Message");
+
     drone->vel_cmd.x = msg->twist.linear.x;
     drone->vel_cmd.y = msg->twist.linear.y;
     drone->vel_cmd.z = msg->twist.linear.z;

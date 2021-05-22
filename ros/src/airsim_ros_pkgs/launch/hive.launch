@@ -20,9 +20,9 @@
     <!-- Simple PID Position Controller -->
 	<include file="$(find airsim_ros_pkgs)/launch/position_controller_simple.launch"/>
 
-    <node name="move_drone_node" type="px4_move_control.py" output="screen">
+    <node name="px4_move_control" pkg="airsim_ros_pkgs" type="px4_move_control.py" output="screen">
         <!-- TODO: PUll this from the settings file -->
-        <param name="drone_name" type="string" value="PX4">
+        <param name="drone_name" type="string" value="PX4" />
     </node>
 
 	<!-- Static transforms -->
