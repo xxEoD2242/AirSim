@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import rospy
 from airsim_ros_pkgs.srv import SetLocalPosition
 
