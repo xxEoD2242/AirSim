@@ -26,6 +26,8 @@ STRICT_MODE_ON
 #include <math_common.h>
 #include <utils.h>
 
+#include <string>
+
 // todo nicer api
 class PIDParams
 {
@@ -41,6 +43,7 @@ public:
 
     double reached_thresh_xyz;
     double reached_yaw_degrees;
+    std::string drone_name;
 
     PIDParams():
         kp_x(0.5),
@@ -52,7 +55,8 @@ public:
         kd_z(0.1),
         kd_yaw(0.1),
         reached_thresh_xyz(0.5),
-        reached_yaw_degrees(5.0)
+        reached_yaw_degrees(5.0),
+        drone_name("PX4")
         {}
 
     bool load_from_rosparams(const ros::NodeHandle& nh);
