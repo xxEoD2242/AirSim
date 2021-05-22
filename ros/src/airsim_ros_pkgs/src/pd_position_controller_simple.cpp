@@ -59,7 +59,7 @@ void PIDPositionController::initialize_ros()
     nh_private_.getParam("update_control_every_n_sec", update_control_every_n_sec);
 
     // ROS publishers
-    airsim_vel_cmd_world_frame_pub_ = nh_private_.advertise<airsim_ros_pkgs::VelCmd>("/vel_cmd_world_frame", 1);
+    airsim_vel_cmd_world_frame_pub_ = nh_private_.advertise<airsim_ros_pkgs::VelCmd>("/airsim_node/PX4/vel_cmd_world_frame", 1);
  
     // ROS subscribers
     airsim_odom_sub_ = nh_.subscribe("/airsim_node/PX4/odom_local_enu", 50, &PIDPositionController::airsim_odom_cb, this);

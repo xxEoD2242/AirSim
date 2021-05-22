@@ -1,8 +1,10 @@
+#!/usr/bin/env python3
+
 import rospy
 from airsim_ros_pkgs.srv import SetLocalPosition
 
 if __name__ == '__main__':
-    rospy.init_node('move_drone_node')
+    rospy.init_node('px4_move_drone')
     parent_frame = rospy.get_param('~parent_frame', 'world')
     child_frame = rospy.get_param('~child_frame','PX4')
     pose_topic = rospy.get_param('~pose_topic','/airsim_node/PX4/front_center_custom/pose')
@@ -32,15 +34,15 @@ if __name__ == '__main__':
                 print("This input was not correct!")
 
         print("Goal input is valid: \n\n Executing...")
-        """
-        TODO: Make a custom message structure to handle this
-        goal = SetLocalPosition()
-        goal.x = float(x_pos)
-        goal.y = float(y_pos)
-        goal.z = float(z_pos)
-        goal.yaw = float(yaw)
-        goal.vehicle_name = child_frame
-        """
+        
+        # TODO: Make a custom message structure to handle this
+        # goal = SetLocalPosition()
+        x_pos = float(x_pos)
+        y_pos = float(y_pos)
+        z_pos = float(z_pos)
+        yaw = float(yaw)
+       #  goal.vehicle_name = child_frame
+    
 
         try:
             # This calls the service with a message strucutre that is defined
