@@ -48,22 +48,13 @@ if __name__ == '__main__':
                 print("This input was not correct!")
 
         print("Goal input is valid: \n\n Executing...")
-<<<<<<< HEAD
-=======
-        
->>>>>>> fab151503c95c69b041ae86e5f69551326495bf6
         # TODO: Make a custom message structure to handle this
         # goal = SetLocalPosition()
         x_pos = float(x_pos)
         y_pos = float(y_pos)
         z_pos = float(z_pos)
         yaw = float(yaw)
-<<<<<<< HEAD
         #goal.vehicle_name = child_frame
-=======
-       #  goal.vehicle_name = child_frame
-    
->>>>>>> fab151503c95c69b041ae86e5f69551326495bf6
 
         try:
             # This calls the service with a message strucutre that is defined
