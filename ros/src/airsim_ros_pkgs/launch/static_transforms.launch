@@ -1,4 +1,5 @@
 <launch>
+        <node pkg="tf2_ros" type="static_transform_publisher" name="world_to_world_enu" args="0 0 0 1.57 0 3.14 world world_enu"/>
         <node pkg="tf2_ros" type="static_transform_publisher" name="world_to_map" args="0 0 0 0 0 0 world map"/>
         <node pkg="tf2_ros" type="static_transform_publisher" name="map_to_vehicle" args="0 0 0 0 0 0 map PX4"/>
         <node pkg="tf2_ros" type="static_transform_publisher" name="tf_camera" args="0 0 0 0 0 0 PX4 base_link"/>
