@@ -103,7 +103,7 @@ void AirsimROSWrapper::initialize_ros()
     nh_private_.param("world_frame_id", world_frame_id_, world_frame_id_);
     // odom_frame_id_ = world_frame_id_ == AIRSIM_FRAME_ID ? AIRSIM_ODOM_FRAME_ID : ENU_ODOM_FRAME_ID;
     world_frame_id_ = "world";
-    odom_frame_id_ = "odom_local_enu";
+    odom_frame_id_ = "odom_local_ned";
     nh_private_.param("odom_frame_id", odom_frame_id_, odom_frame_id_);
     // isENU_ = !(odom_frame_id_ == AIRSIM_ODOM_FRAME_ID);
     nh_private_.param("coordinate_system_enu", isENU_, isENU_);
@@ -570,8 +570,6 @@ void AirsimROSWrapper::vel_cmd_world_frame_cb(const airsim_ros_pkgs::VelCmd::Con
 
     auto drone = static_cast<MultiRotorROS*>(vehicle_name_ptr_map_[vehicle_name].get());
 
-    ROS_INFO("Received a Vel Command Message");
-
     drone->vel_cmd.x = msg->twist.linear.x;
     drone->vel_cmd.y = msg->twist.linear.y;
     drone->vel_cmd.z = msg->twist.linear.z;
@@ -942,7 +940,7 @@ void AirsimROSWrapper::publish_world_to_vehicle_tf(const nav_msgs::Odometry& odo
     geometry_msgs::TransformStamped odom_tf;
     odom_tf.header.stamp = odom_msg.header.stamp;
     odom_tf.header.frame_id = world_frame_id_;
-    odom_tf.child_frame_id = odom_msg.header.frame_id;
+    odom_tf.child_frame_id = "PX4";
     odom_tf.transform.translation.x = odom_msg.pose.pose.position.x;
     odom_tf.transform.translation.y = odom_msg.pose.pose.position.y;
     odom_tf.transform.translation.z = odom_msg.pose.pose.position.z;
