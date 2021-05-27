@@ -959,9 +959,9 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     cam_tf_body_msg.header.stamp = time;
     cam_tf_body_msg.header.frame_id = frame_id;
     cam_tf_body_msg.child_frame_id = "camera_body";
-    cam_tf_body_msg.transform.translation.x = odom_msg.pose.pose.position.x;
+    cam_tf_body_msg.transform.translation.x = odom_msg.pose.pose.position.x + 0.35;
     cam_tf_body_msg.transform.translation.y = odom_msg.pose.pose.position.y;
-    cam_tf_body_msg.transform.translation.z = odom_msg.pose.pose.position.z;
+    cam_tf_body_msg.transform.translation.z = odom_msg.pose.pose.position.z - 0.1;
     cam_tf_body_msg.transform.rotation.x = odom_msg.pose.pose.orientation.x;
     cam_tf_body_msg.transform.rotation.y = odom_msg.pose.pose.orientation.y;
     cam_tf_body_msg.transform.rotation.z = odom_msg.pose.pose.orientation.z;
