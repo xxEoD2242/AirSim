@@ -5,6 +5,8 @@
 #include "common/AirSimSettings.hpp"
 #include <tf2_sensor_msgs/tf2_sensor_msgs.h>
 
+#include "Eigen/Eigen"
+
 
 constexpr char AirsimROSWrapper::CAM_YML_NAME[];
 constexpr char AirsimROSWrapper::WIDTH_YML_NAME[];
@@ -977,6 +979,41 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     //camera_pose.pose.orientation.y = odom_msg.pose.pose.orientation.y;
     //camera_pose.pose.orientation.z = odom_msg.pose.pose.orientation.z;
     //camera_pose.pose.orientation.w = odom_msg.pose.pose.orientation.w;
+
+    
+    
+    Eigen::Matrix4d zRot = Eigen::Matrix4d::Identity();
+    Eigen::Matrix4d rotated = Eigen::Matrix4d::Zero();
+
+    zRot(0, 0) = 0.0;
+
+    zRot(0, 1) = 0.0;
+
+    zRot(0, 2) = -1.0;
+
+    zRot(0, 3) = 0.0;
+
+    zRot(1, 0) = 1.0;
+
+    zRot(1, 1) = 0.0;
+
+    zRot(1, 2) = 0.0;
+
+    zRot(1, 3) = 0.0;
+
+    zRot(2, 0) = 0.0;
+
+    zRot(2, 1) = -1.0;
+
+    zRot(2, 2) = 0.0;
+
+    zRot(2, 3) = 0.0;
+    /* zRot << 0.0, -1.0, 0.0, 0.0,
+            1.0,  0.0, 0.0, 0.0,
+            0.0,  0.0, 1.0, 0.0,
+            0.0,  0.0, 0.0, 1.0; */
+    
+    Eigen::Matrix4d matCamOptical = Eigen::Matrix4d::Identity();
     
 
     tf2::Quaternion quat_cam_body;
@@ -990,10 +1027,30 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
 
     if (isENU_)
     {
+
+        
         // ENU rotation for the Tait-Bryan angles
     mat_cam_optical.setValue(mat_cam_body.getColumn(1).getY(), mat_cam_body.getColumn(2).getY(), mat_cam_body.getColumn(0).getY(),
                              mat_cam_body.getColumn(1).getX(), mat_cam_body.getColumn(2).getX(), mat_cam_body.getColumn(0).getX(),
                              -mat_cam_body.getColumn(1).getZ(), -mat_cam_body.getColumn(2).getZ(), -mat_cam_body.getColumn(0).getZ());
+    // matCamOptical.block<3,3>(0,0) = mat_cam_optical;
+    matCamOptical(0, 0) = mat_cam_body.getColumn(0).getX();
+    matCamOptical(0, 1) = mat_cam_body.getColumn(0).getY();
+    matCamOptical(0, 2) = mat_cam_body.getColumn(0).getZ();
+    matCamOptical(0, 3) = odom_msg.pose.pose.position.x;
+    matCamOptical(1, 0) = mat_cam_body.getColumn(1).getX();
+    matCamOptical(1, 1) = mat_cam_body.getColumn(1).getY();
+    matCamOptical(1, 2) = mat_cam_body.getColumn(1).getZ();
+    matCamOptical(1, 3) = odom_msg.pose.pose.position.y;
+    matCamOptical(2, 0) = mat_cam_body.getColumn(2).getX();
+    matCamOptical(2, 1) = mat_cam_body.getColumn(2).getY();
+    matCamOptical(2, 2) = mat_cam_body.getColumn(2).getZ();
+    matCamOptical(2, 3) = odom_msg.pose.pose.position.x;
+    
+    rotated = matCamOptical * zRot;
+    mat_cam_optical.setValue(rotated(0,0), rotated(0,1), rotated(0,2),
+                             rotated(1,0), rotated(1,1), rotated(1,2),
+                             rotated(2,0), rotated(2,1), rotated(2,2));
     }
     else
     {
@@ -1630,19 +1687,76 @@ void AirsimROSWrapper::publish_camera_tf(const ImageResponse& img_response, cons
     cam_tf_optical_msg.transform.translation.y = cam_tf_body_msg.transform.translation.y;
     cam_tf_optical_msg.transform.translation.z = cam_tf_body_msg.transform.translation.z;
 
+    Eigen::Matrix4d zRot = Eigen::Matrix4d::Identity();
+    Eigen::Matrix4d rotated = Eigen::Matrix4d::Zero();
+
+    zRot(0, 0) = 0.0;
+
+    zRot(0, 1) = 0.0;
+
+    zRot(0, 2) = -1.0;
+
+    zRot(0, 3) = 0.0;
+
+    zRot(1, 0) = 1.0;
+
+    zRot(1, 1) = 0.0;
+
+    zRot(1, 2) = 0.0;
+
+    zRot(1, 3) = 0.0;
+
+    zRot(2, 0) = 0.0;
+
+    zRot(2, 1) = -1.0;
+
+    zRot(2, 2) = 0.0;
+
+    zRot(2, 3) = 0.0;
+
+    /* zRot << 0.0, -1.0, 0.0, 0.0,
+            1.0,  0.0, 0.0, 0.0,
+            0.0,  0.0, 1.0, 0.0,
+            0.0,  0.0, 0.0, 1.0; */
+    
+    Eigen::Matrix4d matCamOptical = Eigen::Matrix4d::Identity();
+    
+
     tf2::Quaternion quat_cam_body;
     tf2::Quaternion quat_cam_optical;
     tf2::convert(cam_tf_body_msg.transform.rotation, quat_cam_body);
     tf2::Matrix3x3 mat_cam_body(quat_cam_body);
-    // tf2::Matrix3x3 mat_cam_optical = matrix_cam_body_to_optical_ * mat_cam_body * matrix_cam_body_to_optical_inverse_;
-    // tf2::Matrix3x3 mat_cam_optical = matrix_cam_body_to_optical_ * mat_cam_body;
     tf2::Matrix3x3 mat_cam_optical;
+    // Compute the transform from NED to ENU (swap X and Y and negate Z)
+
+    // TODO: Invert this matrix to transform from the camera frame to the regular world
+
     if (isENU_)
     {
-        // ENU rotation of the optical frame
+
+        
+        // ENU rotation for the Tait-Bryan angles
     mat_cam_optical.setValue(mat_cam_body.getColumn(1).getY(), mat_cam_body.getColumn(2).getY(), mat_cam_body.getColumn(0).getY(),
                              mat_cam_body.getColumn(1).getX(), mat_cam_body.getColumn(2).getX(), mat_cam_body.getColumn(0).getX(),
                              -mat_cam_body.getColumn(1).getZ(), -mat_cam_body.getColumn(2).getZ(), -mat_cam_body.getColumn(0).getZ());
+    // matCamOptical.block<3,3>(0,0) = mat_cam_optical;
+    matCamOptical(0, 0) = mat_cam_body.getColumn(0).getX();
+    matCamOptical(0, 1) = mat_cam_body.getColumn(0).getY();
+    matCamOptical(0, 2) = mat_cam_body.getColumn(0).getZ();
+    matCamOptical(0, 3) = cam_tf_body_msg.transform.translation.x;
+    matCamOptical(1, 0) = mat_cam_body.getColumn(1).getX();
+    matCamOptical(1, 1) = mat_cam_body.getColumn(1).getY();
+    matCamOptical(1, 2) = mat_cam_body.getColumn(1).getZ();
+    matCamOptical(1, 3) = cam_tf_body_msg.transform.translation.y;
+    matCamOptical(2, 0) = mat_cam_body.getColumn(2).getX();
+    matCamOptical(2, 1) = mat_cam_body.getColumn(2).getY();
+    matCamOptical(2, 2) = mat_cam_body.getColumn(2).getZ();
+    matCamOptical(2, 3) = cam_tf_body_msg.transform.translation.z;
+    
+    rotated = matCamOptical * zRot;
+    mat_cam_optical.setValue(rotated(0,0), rotated(0,1), rotated(0,2),
+                             rotated(1,0), rotated(1,1), rotated(1,2),
+                             rotated(2,0), rotated(2,1), rotated(2,2));
     }
     else
     {
