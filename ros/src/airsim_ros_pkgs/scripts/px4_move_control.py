@@ -6,13 +6,13 @@ from airsim_ros_pkgs.srv import SetLocalPosition, Takeoff, Land
 if __name__ == '__main__':
     rospy.init_node('px4_move_control')
     parent_frame = rospy.get_param('~parent_frame', 'world')
-    child_frame = rospy.get_param('~child_frame','PX4')
-    pose_topic = rospy.get_param('~pose_topic','/airsim_node/PX4/front_center_custom/pose')
-    odom_topic = rospy.get_param('~odom_topic','/airsim_node/PX4/odom_local_enu')
+    child_frame = rospy.get_param('~child_frame','drone_name')
+    drone_name = rospy.get_param('~drone_name', 'drone_name')
+    odom_topic = rospy.get_param('~odom_topic','/airsim_node/{drone_name}/odom_local_ned'.format(drone_name=drone_name))
     goal_topic = rospy.get_param('~goal_topic', "/airsim_node/local_position_goal")
     service_name = '/airsim_node/local_position_goal'
-    takeoff_name = '/airsim_node/PX4/takeoff'
-    land_name = '/airsim_node/PX4/land'
+    takeoff_name = '/airsim_node/{drone_name}/takeoff'.format(drone_name=drone_name)
+    land_name = '/airsim_node/{drone_name}/land'.format(drone_name=drone_name)
     rospy.wait_for_service(service_name)
     rospy.wait_for_service(takeoff_name)
     rospy.wait_for_service(land_name)
@@ -22,7 +22,7 @@ if __name__ == '__main__':
     taken_off = False
     in_the_air = False
 
-    
+
     rate = rospy.Rate(30.0)
     try:
         while not rospy.is_shutdown():
