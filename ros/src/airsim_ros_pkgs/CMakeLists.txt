@@ -76,7 +76,7 @@ generate_messages(
 
 catkin_package(
   INCLUDE_DIRS include
-  DEPENDS Eigen
+  DEPENDS Eigen3
   # LIBRARIES airsim_ros
   CATKIN_DEPENDS message_runtime roscpp std_msgs # nodelet 
 )
@@ -91,7 +91,7 @@ include_directories(
   ${AIRSIM_ROOT}/MavLinkCom/common_utils
   ${OpenCV_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
-  ${Eigen_INCLUDE_DIRS}
+  ${Eigen3_INCLUDE_DIRS}
 )
 
 add_library(airsim_settings_parser src/airsim_settings_parser.cpp)

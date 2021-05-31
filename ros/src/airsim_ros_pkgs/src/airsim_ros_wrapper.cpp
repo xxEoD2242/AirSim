@@ -983,31 +983,37 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     
     
     Eigen::Matrix4d zRot = Eigen::Matrix4d::Identity();
+    Eigen::Matrix4d xRot = Eigen::Matrix4d::Identity();
+    Eigen::Matrix4d x2Rot = Eigen::Matrix4d::Identity();
+    Eigen::Matrix4d yRot = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d rotated = Eigen::Matrix4d::Zero();
-
+    // Rotate about the x and y axis by 90 and 90 degrees
     zRot(0, 0) = 0.0;
-
     zRot(0, 1) = 0.0;
-
     zRot(0, 2) = -1.0;
-
     zRot(0, 3) = 0.0;
-
     zRot(1, 0) = 1.0;
-
     zRot(1, 1) = 0.0;
-
     zRot(1, 2) = 0.0;
-
     zRot(1, 3) = 0.0;
-
     zRot(2, 0) = 0.0;
-
     zRot(2, 1) = -1.0;
-
     zRot(2, 2) = 0.0;
-
     zRot(2, 3) = 0.0;
+    // Rotate about the Z-axis by 180 degrees
+    xRot(0, 0) = 0.0;
+    xRot(0, 1) = 0.0;
+    xRot(0, 2) = -1.0;
+    xRot(0, 3) = 0.0;
+    xRot(1, 0) = 0.0;
+    xRot(1, 1) = 1.0;
+    xRot(1, 2) = 0.0;
+    xRot(1, 3) = 0.0;
+    xRot(2, 0) = 1.0;
+    xRot(2, 1) = 0.0;
+    xRot(2, 2) = 0.0;
+    xRot(2, 3) = 0.0;
+
     /* zRot << 0.0, -1.0, 0.0, 0.0,
             1.0,  0.0, 0.0, 0.0,
             0.0,  0.0, 1.0, 0.0,
@@ -1029,6 +1035,9 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     {
 
         
+       /* mat_cam_optical.setValue(mat_cam_body.getColumn(1).getX(), mat_cam_body.getColumn(2).getX(), mat_cam_body.getColumn(0).getX(),
+                             mat_cam_body.getColumn(1).getY(), mat_cam_body.getColumn(2).getY(), mat_cam_body.getColumn(0).getY(),
+                             mat_cam_body.getColumn(1).getZ(), mat_cam_body.getColumn(2).getZ(), mat_cam_body.getColumn(0).getZ()); */
         // ENU rotation for the Tait-Bryan angles
     mat_cam_optical.setValue(mat_cam_body.getColumn(1).getY(), mat_cam_body.getColumn(2).getY(), mat_cam_body.getColumn(0).getY(),
                              mat_cam_body.getColumn(1).getX(), mat_cam_body.getColumn(2).getX(), mat_cam_body.getColumn(0).getX(),
@@ -1047,7 +1056,8 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     matCamOptical(2, 2) = mat_cam_body.getColumn(2).getZ();
     matCamOptical(2, 3) = odom_msg.pose.pose.position.x;
     
-    rotated = matCamOptical * zRot;
+    // Still off by 90 degrees
+    rotated = matCamOptical * zRot * xRot;
     mat_cam_optical.setValue(rotated(0,0), rotated(0,1), rotated(0,2),
                              rotated(1,0), rotated(1,1), rotated(1,2),
                              rotated(2,0), rotated(2,1), rotated(2,2));
@@ -1688,6 +1698,7 @@ void AirsimROSWrapper::publish_camera_tf(const ImageResponse& img_response, cons
     cam_tf_optical_msg.transform.translation.z = cam_tf_body_msg.transform.translation.z;
 
     Eigen::Matrix4d zRot = Eigen::Matrix4d::Identity();
+    Eigen::Matrix4d xRot = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d rotated = Eigen::Matrix4d::Zero();
 
     zRot(0, 0) = 0.0;
@@ -1713,6 +1724,21 @@ void AirsimROSWrapper::publish_camera_tf(const ImageResponse& img_response, cons
     zRot(2, 2) = 0.0;
 
     zRot(2, 3) = 0.0;
+
+    // Rotate by 180 degrees along the z-aixs
+    // Z is up
+    xRot(0, 0) = 0.0;
+    xRot(0, 1) = 0.0;
+    xRot(0, 2) = -1.0;
+    xRot(0, 3) = 0.0;
+    xRot(1, 0) = 0.0;
+    xRot(1, 1) = 1.0;
+    xRot(1, 2) = 0.0;
+    xRot(1, 3) = 0.0;
+    xRot(2, 0) = 1.0;
+    xRot(2, 1) = 0.0;
+    xRot(2, 2) = 0.0;
+    xRot(2, 3) = 0.0;
 
     /* zRot << 0.0, -1.0, 0.0, 0.0,
             1.0,  0.0, 0.0, 0.0,
@@ -1753,7 +1779,7 @@ void AirsimROSWrapper::publish_camera_tf(const ImageResponse& img_response, cons
     matCamOptical(2, 2) = mat_cam_body.getColumn(2).getZ();
     matCamOptical(2, 3) = cam_tf_body_msg.transform.translation.z;
     
-    rotated = matCamOptical * zRot;
+    rotated = matCamOptical * zRot * xRot;
     mat_cam_optical.setValue(rotated(0,0), rotated(0,1), rotated(0,2),
                              rotated(1,0), rotated(1,1), rotated(1,2),
                              rotated(2,0), rotated(2,1), rotated(2,2));
