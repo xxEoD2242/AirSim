@@ -984,8 +984,6 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     
     Eigen::Matrix4d zRot = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d xRot = Eigen::Matrix4d::Identity();
-    Eigen::Matrix4d x2Rot = Eigen::Matrix4d::Identity();
-    Eigen::Matrix4d yRot = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d rotated = Eigen::Matrix4d::Zero();
     // Rotate about the x and y axis by 90 and 90 degrees
     zRot(0, 0) = 0.0;
