@@ -1071,13 +1071,13 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     quat_cam_optical.normalize();
     tf2::convert(quat_cam_optical, camera_pose.pose.orientation);
 
-    /* if (isENU_)
+    if (isENU_)
     {
         std::swap(camera_pose.pose.position.x, camera_pose.pose.position.y);
-        std::swap(camera_pose.pose.orientation.x, camera_pose.pose.orientation.y);
-        camera_pose.pose.orientation.z = -camera_pose.pose.orientation.z;
+       // std::swap(camera_pose.pose.orientation.x, camera_pose.pose.orientation.y);
+       // camera_pose.pose.orientation.z = -camera_pose.pose.orientation.z;
         camera_pose.pose.position.z = -camera_pose.pose.position.z;
-    } */
+    }
     return camera_pose;
 }
 
