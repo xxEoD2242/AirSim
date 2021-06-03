@@ -916,7 +916,7 @@ sensor_msgs::Imu AirsimROSWrapper::get_imu_msg_from_airsim(const msr::airlib::Im
     // imu_msg.orientation_covariance = ;
     // imu_msg.angular_velocity_covariance = ;
     // imu_msg.linear_acceleration_covariance = ;
-    imu_msg.header.stamp = make_ts(imu_data.time_stamp);
+    //imu_msg.header.stamp = make_ts(imu_data.time_stamp);
     return imu_msg;
 }
 
@@ -1001,13 +1001,13 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     // Rotate about the Z-axis by 180 degrees
     xRot(0, 0) = 0.0;
     xRot(0, 1) = 0.0;
-    xRot(0, 2) = -1.0;
+    xRot(0, 2) = 1.0;
     xRot(0, 3) = 0.0;
     xRot(1, 0) = 0.0;
     xRot(1, 1) = 1.0;
     xRot(1, 2) = 0.0;
     xRot(1, 3) = 0.0;
-    xRot(2, 0) = 1.0;
+    xRot(2, 0) = -1.0;
     xRot(2, 1) = 0.0;
     xRot(2, 2) = 0.0;
     xRot(2, 3) = 0.0;
@@ -1071,13 +1071,6 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     quat_cam_optical.normalize();
     tf2::convert(quat_cam_optical, camera_pose.pose.orientation);
 
-    if (isENU_)
-    {
-        std::swap(camera_pose.pose.position.x, camera_pose.pose.position.y);
-       // std::swap(camera_pose.pose.orientation.x, camera_pose.pose.orientation.y);
-       // camera_pose.pose.orientation.z = -camera_pose.pose.orientation.z;
-        camera_pose.pose.position.z = -camera_pose.pose.position.z;
-    }
     return camera_pose;
 }
 
@@ -1727,13 +1720,13 @@ void AirsimROSWrapper::publish_camera_tf(const ImageResponse& img_response, cons
     // Z is up
     xRot(0, 0) = 0.0;
     xRot(0, 1) = 0.0;
-    xRot(0, 2) = -1.0;
+    xRot(0, 2) = 1.0;
     xRot(0, 3) = 0.0;
     xRot(1, 0) = 0.0;
     xRot(1, 1) = 1.0;
     xRot(1, 2) = 0.0;
     xRot(1, 3) = 0.0;
-    xRot(2, 0) = 1.0;
+    xRot(2, 0) = -1.0;
     xRot(2, 1) = 0.0;
     xRot(2, 2) = 0.0;
     xRot(2, 3) = 0.0;
@@ -1793,13 +1786,13 @@ void AirsimROSWrapper::publish_camera_tf(const ImageResponse& img_response, cons
     quat_cam_optical.normalize();
     tf2::convert(quat_cam_optical, cam_tf_optical_msg.transform.rotation);
 
-    /*if (isENU_)
+    if (isENU_)
     {
         std::swap(cam_tf_optical_msg.transform.translation.x, cam_tf_optical_msg.transform.translation.y);
-        std::swap(cam_tf_optical_msg.transform.rotation.x, cam_tf_optical_msg.transform.rotation.y);
+        //std::swap(cam_tf_optical_msg.transform.rotation.x, cam_tf_optical_msg.transform.rotation.y);
         cam_tf_optical_msg.transform.translation.z = -cam_tf_optical_msg.transform.translation.z;
-        cam_tf_optical_msg.transform.rotation.z = -cam_tf_optical_msg.transform.rotation.z;
-    }*/
+        //cam_tf_optical_msg.transform.rotation.z = -cam_tf_optical_msg.transform.rotation.z;
+    }
 
     tf_broadcaster_.sendTransform(cam_tf_body_msg);
     tf_broadcaster_.sendTransform(cam_tf_optical_msg);
