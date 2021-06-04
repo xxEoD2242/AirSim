@@ -1546,7 +1546,7 @@ void AirsimROSWrapper::stereo_img_response_timer_cb(const ros::TimerEvent& event
     };
         const std::vector<ImageResponse>& img_response = airsim_client_images_.simGetImages(request);
         
-        process_and_publish_img_response(img_response, "PX4");
+        process_and_publish_stereo_img_response(img_response, "PX4");
 
     }
 
