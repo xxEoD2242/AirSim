@@ -1540,9 +1540,7 @@ void AirsimROSWrapper::stereo_img_response_timer_cb(const ros::TimerEvent& event
          //floating point uncompressed image  
         ImageRequest("front_center_custom", ImageType::DepthPerspective, true),
         //png format
-        ImageRequest("front_left_custom", ImageType::Scene, false, false),
-        //uncompressed RGB array bytes
-        ImageRequest("front_right_custom", ImageType::Scene, false, false)      
+        ImageRequest("front_center", ImageType::Scene, false, false)     
     };
         const std::vector<ImageResponse>& img_response = airsim_client_images_.simGetImages(request);
         
@@ -1648,7 +1646,7 @@ void AirsimROSWrapper::process_and_publish_stereo_img_response(const std::vector
 {
     // todo add option to use airsim time (image_response.TTimePoint) like Gazebo /use_sim_time param
     int img_response_idx_internal = 0;
-    for (img_response_idx_internal;img_response_idx_internal < 3;img_response_idx_internal++)
+    for (img_response_idx_internal;img_response_idx_internal < 2;img_response_idx_internal++)
     {
            
         const auto& curr_img_response = img_response_vec[img_response_idx_internal];
