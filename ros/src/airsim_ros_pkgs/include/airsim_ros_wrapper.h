@@ -275,7 +275,7 @@ private:
     sensor_msgs::ImagePtr get_depth_img_msg_from_response(const ImageResponse& img_response, const std::string& frame_id);
     
     void process_and_publish_img_response(const std::vector<ImageResponse>& img_response_vec, const int img_response_idx, const std::string& vehicle_name);
-    void process_and_publish_stereo_img_response(const std::vector<ImageResponse>& img_response_vec, const std::string& vehicle_name, const int& image_type);
+    void process_and_publish_stereo_img_response(const ImageResponse& img_response, const std::string& vehicle_name, const int& image_type);
 
     // methods which parse setting json ang generate ros pubsubsrv
     void create_ros_pubs_from_settings_json();
