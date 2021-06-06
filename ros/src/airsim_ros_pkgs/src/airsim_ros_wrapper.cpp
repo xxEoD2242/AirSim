@@ -32,6 +32,7 @@ AirsimROSWrapper::AirsimROSWrapper(const ros::NodeHandle& nh, const ros::NodeHan
     nh_(nh),
     nh_private_(nh_private),
     img_async_spinner_(1, &img_timer_cb_queue_), // a thread for image callbacks to be 'spun' by img_async_spinner_
+    depth_img_async_spinner_(1, &depth_img_timer_cb_queue_),
     lidar_async_spinner_(1, &lidar_timer_cb_queue_), // same as above, but for lidar
     host_ip_(host_ip),
     airsim_client_images_(host_ip),
