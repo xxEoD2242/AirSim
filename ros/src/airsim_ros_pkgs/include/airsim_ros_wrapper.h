@@ -377,6 +377,7 @@ private:
 
     /// ROS Timers.
     ros::Timer airsim_img_response_timer_;
+    ros::Timer airsim_depth_img_response_timer_;
     ros::Timer airsim_control_update_timer_;
     ros::Timer airsim_lidar_update_timer_;
 
