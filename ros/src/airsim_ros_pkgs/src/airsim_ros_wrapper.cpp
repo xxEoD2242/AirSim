@@ -340,15 +340,15 @@ void AirsimROSWrapper::create_ros_pubs_from_settings_json()
     }
 
     // if >0 cameras, add one more thread for img_request_timer_cb
-    if(!airsim_img_request_vehicle_name_pair_vec_.empty())
-    {
+    //if(!airsim_img_request_vehicle_name_pair_vec_.empty())
+    //{
         double update_airsim_img_response_every_n_sec;
         nh_private_.getParam("update_airsim_img_response_every_n_sec", update_airsim_img_response_every_n_sec);
-
         ros::TimerOptions timer_options(ros::Duration(update_airsim_img_response_every_n_sec), boost::bind(&AirsimROSWrapper::stereo_img_response_timer_cb, this, _1), &img_timer_cb_queue_);
+        ros::TimerOptions timer_options(ros::Duration(update_airsim_img_response_every_n_sec), boost::bind(&AirsimROSWrapper::depth_img_response_timer_cb, this, _1), &depth_img_timer_cb_queue_);
         airsim_img_response_timer_ = nh_private_.createTimer(timer_options);
         is_used_img_timer_cb_queue_ = true;
-    }
+    //}
 
     // lidars update on their own callback/thread at a given rate
     if (lidar_cnt > 0)
@@ -1532,19 +1532,38 @@ void AirsimROSWrapper::img_response_timer_cb(const ros::TimerEvent& event)
 
 }
 
-void AirsimROSWrapper::stereo_img_response_timer_cb(const ros::TimerEvent& event)
+void AirsimROSWrapper::depth_img_response_timer_cb(const ros::TimerEvent& event)
 {
     try
     {
         std::vector<ImageRequest> request = {
          //floating point uncompressed image  
-        ImageRequest("front_center_custom", ImageType::DepthPerspective, true),
-        //png format
+        ImageRequest("front_center_custom", ImageType::DepthPerspective, true)   
+    };
+        const std::vector<ImageResponse>& img_response = airsim_client_images_.simGetImages(request);
+        
+        process_and_publish_stereo_img_response(img_response[0], "PX4", 0);
+
+    }
+
+    catch (rpc::rpc_error& e)
+    {
+        std::string msg = e.get_error().as<std::string>();
+        std::cout << "Exception raised by the API, didn't get image response." << std::endl << msg << std::endl;
+    }
+
+}
+
+void AirsimROSWrapper::stereo_img_response_timer_cb(const ros::TimerEvent& event)
+{
+    try
+    {
+        std::vector<ImageRequest> request = {
         ImageRequest("front_center", ImageType::Scene, false, false)     
     };
         const std::vector<ImageResponse>& img_response = airsim_client_images_.simGetImages(request);
         
-        process_and_publish_stereo_img_response(img_response, "PX4");
+        process_and_publish_stereo_img_response(img_response[0], "PX4", 1);
 
     }
 
@@ -1642,41 +1661,47 @@ sensor_msgs::CameraInfo AirsimROSWrapper::generate_cam_info(const std::string& c
     return cam_info_msg;
 }
 
-void AirsimROSWrapper::process_and_publish_stereo_img_response(const std::vector<ImageResponse>& img_response_vec, const std::string& vehicle_name)
+
+/*
+    image_type [int] - Represents the position in the image publisher vector. Currently, 0 is Depth Perspective and 1 is the Scene image
+*/
+
+void AirsimROSWrapper::process_and_publish_stereo_img_response(const ImageResponse& img_response, const std::string& vehicle_name, const int image_type)
 {
     // todo add option to use airsim time (image_response.TTimePoint) like Gazebo /use_sim_time param
-    int img_response_idx_internal = 0;
-    for (img_response_idx_internal;img_response_idx_internal < 2;img_response_idx_internal++)
-    {
+    // int img_response_idx_internal = 0;
+    //for (img_response_idx_internal;img_response_idx_internal < 2;img_response_idx_internal++)
+    //{
            
-        const auto& curr_img_response = img_response_vec[img_response_idx_internal];
+        
+
         // todo publishing a tf for each capture type seems stupid. but it foolproofs us against render thread's async stuff, I hope. 
         // Ideally, we should loop over cameras and then captures, and publish only one tf.  
-        publish_camera_tf(curr_img_response, vehicle_name, curr_img_response.camera_name);
+        publish_camera_tf(img_response, vehicle_name, img_response.camera_name);
 
         // todo simGetCameraInfo is wrong + also it's only for image type -1.
         // msr::airlib::CameraInfo camera_info = airsim_client_.simGetCameraInfo(curr_img_response.camera_name);
 
         // update timestamp of saved cam info msgs
-        ros::Time ros_timestamp = airsim_timestamp_to_ros(curr_img_response.time_stamp);
+        ros::Time ros_timestamp = airsim_timestamp_to_ros(img_response.time_stamp);
 
-        camera_info_msg_vec_[img_response_idx_internal].header.stamp = ros_timestamp;
-        cam_info_pub_vec_[img_response_idx_internal].publish(camera_info_msg_vec_[img_response_idx_internal]);
+        camera_info_msg_vec_[image_type].header.stamp = ros_timestamp;
+        cam_info_pub_vec_[image_type].publish(camera_info_msg_vec_[image_type]);
         
 
         // DepthPlanar / DepthPerspective / DepthVis / DisparityNormalized
-        if (curr_img_response.pixels_as_float)
+        if (img_response.pixels_as_float)
         {
-            image_pub_vec_[img_response_idx_internal].publish(get_depth_img_msg_from_response(curr_img_response,
-                                                    curr_img_response.camera_name + "_optical"));
+            image_pub_vec_[image_type].publish(get_depth_img_msg_from_response(img_response,
+                                                    img_response.camera_name + "_optical"));
         }
         // Scene / Segmentation / SurfaceNormals / Infrared
         else
         {
-            image_pub_vec_[img_response_idx_internal].publish(get_img_msg_from_response(curr_img_response, 
-                                                    curr_img_response.camera_name + "_optical"));
+            image_pub_vec_[image_type].publish(get_img_msg_from_response(img_response, 
+                                                    img_response.camera_name + "_optical"));
         }
-    }
+    // }
 
 }
 

@@ -141,6 +141,7 @@ public:
 
     // std::vector<ros::CallbackQueue> callback_queues_;
     ros::AsyncSpinner img_async_spinner_;
+    ros::AsyncSpinner depth_img_async_spinner;
     ros::AsyncSpinner lidar_async_spinner_;
     bool is_used_lidar_timer_cb_queue_;
     bool is_used_img_timer_cb_queue_;
@@ -222,7 +223,8 @@ private:
 
     /// ROS timer callbacks
     void img_response_timer_cb(const ros::TimerEvent& event); // update images from airsim_client_ every nth sec
-    void stereo_img_response_timer_cb(const ros::TimerEvent& event); // update images from airsim_client_ every nth sec
+    void depth_img_response_timer_cb(const ros::TimerEvent& event); // Update depth images from airsim client
+    void stereo_img_response_timer_cb(const ros::TimerEvent& event); // update stereo images from airsim_client_ every nth sec
     void drone_state_timer_cb(const ros::TimerEvent& event); // update drone state from airsim_client_ every nth sec
     void lidar_timer_cb(const ros::TimerEvent& event);
 
@@ -348,6 +350,7 @@ private:
     // todo not sure if async spinners shuold be inside this class, or should be instantiated in airsim_node.cpp, and cb queues should be public
     // todo for multiple drones with multiple sensors, this won't scale. make it a part of VehicleROS?
     ros::CallbackQueue img_timer_cb_queue_;
+    ros::CallbackQueue depth_img_timer_cb_queue_;
     ros::CallbackQueue lidar_timer_cb_queue_;
 
     std::mutex drone_control_mutex_;
