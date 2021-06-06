@@ -275,7 +275,7 @@ private:
     sensor_msgs::ImagePtr get_depth_img_msg_from_response(const ImageResponse& img_response, const std::string& frame_id);
     
     void process_and_publish_img_response(const std::vector<ImageResponse>& img_response_vec, const int img_response_idx, const std::string& vehicle_name);
-    void process_and_publish_stereo_img_response(const std::vector<ImageResponse>& img_response_vec, const std::string& vehicle_name, const int image_type);
+    void process_and_publish_stereo_img_response(const std::vector<ImageResponse>& img_response_vec, const std::string& vehicle_name, const int& image_type);
 
     // methods which parse setting json ang generate ros pubsubsrv
     void create_ros_pubs_from_settings_json();
@@ -383,8 +383,8 @@ private:
     typedef std::pair<std::vector<ImageRequest>, std::string> airsim_img_request_vehicle_name_pair;
     std::vector<airsim_img_request_vehicle_name_pair> airsim_img_request_vehicle_name_pair_vec_;
     std::vector<image_transport::Publisher> image_pub_vec_;
-    image_transport::Publisher depth_image_pub_;
-    image_transport::Publisher scene_image_pub_;
+    image_transport::Publisher depth_img_pub_;
+    image_transport::Publisher scene_img_pub_;
     std::vector<ros::Publisher> cam_info_pub_vec_;
     std::vector<ros::Publisher> cam_pose_pub_vec_;
 

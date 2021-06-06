@@ -1569,7 +1569,7 @@ void AirsimROSWrapper::stereo_img_response_timer_cb(const ros::TimerEvent& event
         ImageRequest("front_center", ImageType::Scene, false, false)     
     };
         const std::vector<ImageResponse>& img_response_vec = airsim_client_images_.simGetImages(request);
-        const ImageResponse img_reponse = img_response_vec[0];
+        const ImageResponse img_response = img_response_vec[0];
         const int image_type = 1;
         
         process_and_publish_stereo_img_response(img_response, "PX4", image_type);
@@ -1675,7 +1675,7 @@ sensor_msgs::CameraInfo AirsimROSWrapper::generate_cam_info(const std::string& c
     image_type [int] - Represents the position in the image publisher vector. Currently, 0 is Depth Perspective and 1 is the Scene image
 */
 
-void AirsimROSWrapper::process_and_publish_stereo_img_response(const ImageResponse& img_response, const std::string& vehicle_name, const int image_type)
+void AirsimROSWrapper::process_and_publish_stereo_img_response(const ImageResponse& img_response, const std::string& vehicle_name, const int& image_type)
 {
     // todo add option to use airsim time (image_response.TTimePoint) like Gazebo /use_sim_time param
     // int img_response_idx_internal = 0;
