@@ -226,7 +226,7 @@ void AirsimROSWrapper::create_ros_pubs_from_settings_json()
                         current_image_request_vec.push_back(ImageRequest(curr_camera_name, curr_image_type, true));
                     } */
 
-                    image_pub_vec_.push_back(image_transporter.advertise(curr_vehicle_name + "/" + curr_camera_name + "/" + image_type_int_to_string_map_.at(capture_setting.image_type), 1));
+                    // image_pub_vec_.push_back(image_transporter.advertise(curr_vehicle_name + "/" + curr_camera_name + "/" + image_type_int_to_string_map_.at(capture_setting.image_type), 1));
                     cam_info_pub_vec_.push_back(nh_private_.advertise<sensor_msgs::CameraInfo> (curr_vehicle_name + "/" + curr_camera_name + "/camera_info", 10));
                     //cam_pose_pub_vec_.push_back(nh_private_.advertise<geometry_msgs::PoseStamped>(curr_vehicle_name + "/" + curr_camera_name + "/pose", 10));
                     camera_info_msg_vec_.push_back(generate_cam_info(curr_camera_name, camera_setting, capture_setting));
@@ -236,6 +236,9 @@ void AirsimROSWrapper::create_ros_pubs_from_settings_json()
             // airsim_img_request_vehicle_name_pair_vec_.push_back(std::make_pair(current_image_request_vec, curr_vehicle_name));
 
         }
+        depth_img_pub_ = image_transporter.advertise("PX4/front_center_custom/DepthPerspective", 1);
+        scene_img_pub_ = image_transporter.advertise("PX4/front_center/Scene", 1);
+
 
         // iterate over sensors
         std::vector<SensorPublisher> sensors;
@@ -1698,13 +1701,13 @@ void AirsimROSWrapper::process_and_publish_stereo_img_response(const ImageRespon
         // DepthPlanar / DepthPerspective / DepthVis / DisparityNormalized
         if (img_response.pixels_as_float)
         {
-            image_pub_vec_[image_type].publish(get_depth_img_msg_from_response(img_response,
+            depth_img_pub_.publish(get_depth_img_msg_from_response(img_response,
                                                     img_response.camera_name + "_optical"));
         }
         // Scene / Segmentation / SurfaceNormals / Infrared
         else
         {
-            image_pub_vec_[image_type].publish(get_img_msg_from_response(img_response, 
+            scene_img_pub_.publish(get_img_msg_from_response(img_response, 
                                                     img_response.camera_name + "_optical"));
         }
     // }

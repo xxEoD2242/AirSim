@@ -383,6 +383,8 @@ private:
     typedef std::pair<std::vector<ImageRequest>, std::string> airsim_img_request_vehicle_name_pair;
     std::vector<airsim_img_request_vehicle_name_pair> airsim_img_request_vehicle_name_pair_vec_;
     std::vector<image_transport::Publisher> image_pub_vec_;
+    image_transport::Publisher depth_image_pub_;
+    image_transport::Publisher scene_image_pub_;
     std::vector<ros::Publisher> cam_info_pub_vec_;
     std::vector<ros::Publisher> cam_pose_pub_vec_;
 
