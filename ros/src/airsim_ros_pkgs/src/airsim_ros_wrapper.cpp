@@ -346,8 +346,9 @@ void AirsimROSWrapper::create_ros_pubs_from_settings_json()
         double update_airsim_img_response_every_n_sec;
         nh_private_.getParam("update_airsim_img_response_every_n_sec", update_airsim_img_response_every_n_sec);
         ros::TimerOptions timer_options(ros::Duration(update_airsim_img_response_every_n_sec), boost::bind(&AirsimROSWrapper::stereo_img_response_timer_cb, this, _1), &img_timer_cb_queue_);
-        ros::TimerOptions timer_options(ros::Duration(update_airsim_img_response_every_n_sec), boost::bind(&AirsimROSWrapper::depth_img_response_timer_cb, this, _1), &depth_img_timer_cb_queue_);
+        ros::TimerOptions depth_timer_options(ros::Duration(update_airsim_img_response_every_n_sec), boost::bind(&AirsimROSWrapper::depth_img_response_timer_cb, this, _1), &depth_img_timer_cb_queue_);
         airsim_img_response_timer_ = nh_private_.createTimer(timer_options);
+        airsim_depth_img_response_timer_ = nh_private_.createTimer(depth_timer_options);
         is_used_img_timer_cb_queue_ = true;
     //}
 
@@ -1541,9 +1542,11 @@ void AirsimROSWrapper::depth_img_response_timer_cb(const ros::TimerEvent& event)
          //floating point uncompressed image  
         ImageRequest("front_center_custom", ImageType::DepthPerspective, true)   
     };
-        const std::vector<ImageResponse>& img_response = airsim_client_images_.simGetImages(request);
-        
-        process_and_publish_stereo_img_response(img_response[0], "PX4", 0);
+        const std::vector<ImageResponse>& img_response_vec = airsim_client_images_.simGetImages(request);
+        const ImageResponse img_response = img_response_vec[0];
+        const int image_type = 0;
+
+        process_and_publish_stereo_img_response(img_response, "PX4", image_type);
 
     }
 
@@ -1562,9 +1565,11 @@ void AirsimROSWrapper::stereo_img_response_timer_cb(const ros::TimerEvent& event
         std::vector<ImageRequest> request = {
         ImageRequest("front_center", ImageType::Scene, false, false)     
     };
-        const std::vector<ImageResponse>& img_response = airsim_client_images_.simGetImages(request);
+        const std::vector<ImageResponse>& img_response_vec = airsim_client_images_.simGetImages(request);
+        const ImageResponse img_reponse = img_response_vec[0];
+        const int image_type = 1;
         
-        process_and_publish_stereo_img_response(img_response[0], "PX4", 1);
+        process_and_publish_stereo_img_response(img_response, "PX4", image_type);
 
     }
 
@@ -1674,7 +1679,7 @@ void AirsimROSWrapper::process_and_publish_stereo_img_response(const ImageRespon
     //for (img_response_idx_internal;img_response_idx_internal < 2;img_response_idx_internal++)
     //{
            
-        
+        // const auto& img_response = img_response_vec[0];
 
         // todo publishing a tf for each capture type seems stupid. but it foolproofs us against render thread's async stuff, I hope. 
         // Ideally, we should loop over cameras and then captures, and publish only one tf.  
