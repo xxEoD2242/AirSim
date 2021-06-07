@@ -105,7 +105,7 @@ void AirsimROSWrapper::initialize_ros()
     nh_private_.getParam("publish_clock", publish_clock_);
     nh_private_.param("world_frame_id", world_frame_id_, world_frame_id_);
     // odom_frame_id_ = world_frame_id_ == AIRSIM_FRAME_ID ? AIRSIM_ODOM_FRAME_ID : ENU_ODOM_FRAME_ID;
-    world_frame_id_ = "world";
+    world_frame_id_ = "world_ned";
     odom_frame_id_ = "odom_local_ned";
     nh_private_.param("odom_frame_id", odom_frame_id_, odom_frame_id_);
     // isENU_ = !(odom_frame_id_ == AIRSIM_ODOM_FRAME_ID);
