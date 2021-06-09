@@ -346,10 +346,12 @@ void AirsimROSWrapper::create_ros_pubs_from_settings_json()
     // if >0 cameras, add one more thread for img_request_timer_cb
     //if(!airsim_img_request_vehicle_name_pair_vec_.empty())
     //{
-        double update_airsim_img_response_every_n_sec;
-        nh_private_.getParam("update_airsim_img_response_every_n_sec", update_airsim_img_response_every_n_sec);
-        ros::TimerOptions timer_options(ros::Duration(update_airsim_img_response_every_n_sec), boost::bind(&AirsimROSWrapper::stereo_img_response_timer_cb, this, _1), &img_timer_cb_queue_);
-        ros::TimerOptions depth_timer_options(ros::Duration(update_airsim_img_response_every_n_sec), boost::bind(&AirsimROSWrapper::depth_img_response_timer_cb, this, _1), &depth_img_timer_cb_queue_);
+        double update_depth_img_response_every_n_sec;
+        double update_scene_img_response_every_n_sec;
+        nh_private_.getParam("update_depth_img_response_every_n_sec", update_depth_img_response_every_n_sec);
+        nh_private_.getParam("update_scene_img_response_every_n_sec", update_scene_img_response_every_n_sec);
+        ros::TimerOptions timer_options(ros::Duration(update_scene_img_response_every_n_sec), boost::bind(&AirsimROSWrapper::stereo_img_response_timer_cb, this, _1), &img_timer_cb_queue_);
+        ros::TimerOptions depth_timer_options(ros::Duration(update_depth_img_response_every_n_sec), boost::bind(&AirsimROSWrapper::depth_img_response_timer_cb, this, _1), &depth_img_timer_cb_queue_);
         airsim_img_response_timer_ = nh_private_.createTimer(timer_options);
         airsim_depth_img_response_timer_ = nh_private_.createTimer(depth_timer_options);
         is_used_img_timer_cb_queue_ = true;
