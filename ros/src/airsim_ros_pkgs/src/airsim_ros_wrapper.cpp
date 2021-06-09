@@ -1767,15 +1767,15 @@ void AirsimROSWrapper::publish_camera_tf(const ImageResponse& img_response, cons
     matCamOptical(0, 0) = mat_cam_body.getColumn(0).getX();
     matCamOptical(0, 1) = mat_cam_body.getColumn(1).getX();
     matCamOptical(0, 2) = mat_cam_body.getColumn(2).getX();
-    matCamOptical(0, 3) = odom_msg.pose.pose.position.x;
+    matCamOptical(0, 3) = cam_tf_body_msg.transform.translation.x;
     matCamOptical(1, 0) = mat_cam_body.getColumn(0).getY();
     matCamOptical(1, 1) = mat_cam_body.getColumn(1).getY();
     matCamOptical(1, 2) = mat_cam_body.getColumn(2).getY();
-    matCamOptical(1, 3) = odom_msg.pose.pose.position.y;
+    matCamOptical(1, 3) = cam_tf_body_msg.transform.translation.y;
     matCamOptical(2, 0) = mat_cam_body.getColumn(0).getZ();
     matCamOptical(2, 1) = mat_cam_body.getColumn(1).getZ();
     matCamOptical(2, 2) = mat_cam_body.getColumn(2).getZ();
-    matCamOptical(2, 3) = odom_msg.pose.pose.position.x;
+    matCamOptical(2, 3) = cam_tf_body_msg.transform.translation.z;
     
     // Still off by 90 degrees
     rotated = matCamOptical * zRot;
