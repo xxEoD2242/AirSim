@@ -1785,7 +1785,7 @@ void AirsimROSWrapper::publish_camera_tf(const ImageResponse& img_response, cons
    
     mat_cam_optical.getRotation(quat_cam_optical);
     quat_cam_optical.normalize();
-    tf2::convert(quat_cam_optical, camera_pose.transform.rotation);
+    tf2::convert(quat_cam_optical, cam_tf_optical_msg.transform.rotation);
 
     tf_broadcaster_.sendTransform(cam_tf_body_msg);
     tf_broadcaster_.sendTransform(cam_tf_optical_msg);
