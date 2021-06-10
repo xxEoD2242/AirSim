@@ -1740,6 +1740,7 @@ void AirsimROSWrapper::publish_camera_tf(const ImageResponse& img_response, cons
     cam_tf_optical_msg.transform.translation.z = cam_tf_body_msg.transform.translation.z;
 
     Eigen::Matrix4d zRot = Eigen::Matrix4d::Identity();
+    Eigen::Matrix4d xRot = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d rotated = Eigen::Matrix4d::Zero();
 
     // Inital Extrinsic Matrix
@@ -1755,6 +1756,19 @@ void AirsimROSWrapper::publish_camera_tf(const ImageResponse& img_response, cons
     zRot(2, 1) = -1.0;
     zRot(2, 2) = 0.0;
     zRot(2, 3) = 0.0;
+
+    xRot(0, 0) = 0.0;
+    xRot(0, 1) = 0.0;
+    xRot(0, 2) = -1.0;
+    xRot(0, 3) = 0.0;
+    xRot(1, 0) = 0.0;
+    xRot(1, 1) = 1.0;
+    xRot(1, 2) = 0.0;
+    xRot(1, 3) = 0.0;
+    xRot(2, 0) = 1.0;
+    xRot(2, 1) = 0.0;
+    xRot(2, 2) = 0.0;
+    xRot(2, 3) = 0.0;
     
     Eigen::Matrix4d matCamOptical = Eigen::Matrix4d::Identity();
 
@@ -1778,7 +1792,7 @@ void AirsimROSWrapper::publish_camera_tf(const ImageResponse& img_response, cons
     matCamOptical(2, 3) = cam_tf_body_msg.transform.translation.z;
     
     // Still off by 90 degrees
-    rotated = matCamOptical * zRot;
+    rotated = matCamOptical * zRot * xRot;
     mat_cam_optical.setValue(rotated(0,0), rotated(0,1), rotated(0,2),
                              rotated(1,0), rotated(1,1), rotated(1,2),
                              rotated(2,0), rotated(2,1), rotated(2,2));
