@@ -1072,12 +1072,12 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     xRot(0, 1) = 0.0;
     xRot(0, 2) = 1.0;
     xRot(0, 3) = 0.0;
-    xRot(1, 0) = -1.0;
-    xRot(1, 1) = 0.0;
+    xRot(1, 0) = 0.0;
+    xRot(1, 1) = 1.0;
     xRot(1, 2) = 0.0;
     xRot(1, 3) = 0.0;
-    xRot(2, 0) = 0.0;
-    xRot(2, 1) = -1.0;
+    xRot(2, 0) = -1.0;
+    xRot(2, 1) = 0.0;
     xRot(2, 2) = 0.0;
     xRot(2, 3) = 0.0;
     
