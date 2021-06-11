@@ -1098,6 +1098,11 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     quat_cam_optical.normalize();
     tf2::convert(quat_cam_optical, camera_pose.pose.orientation);
 
+    camera_pose.pose.orientation.x = camera_pose.pose.orientation.w;
+    camera_pose.pose.orientation.y = camera_pose.pose.orientation.x;
+    camera_pose.pose.orientation.z = camera_pose.pose.orientation.y;
+    camera_pose.pose.orientation.w = camera_pose.pose.orientation.x;
+
     return camera_pose;
 }
 
