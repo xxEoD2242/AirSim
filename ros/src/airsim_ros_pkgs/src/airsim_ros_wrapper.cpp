@@ -1089,7 +1089,7 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     matCamOptical(2, 3) = odom_msg.pose.pose.position.x;
     
     // Still off by 90 degrees
-    rotated = matCamOptical * zRot;
+    rotated = matCamOptical;
     mat_cam_optical.setValue(rotated(0,0), rotated(0,1), rotated(0,2),
                              rotated(1,0), rotated(1,1), rotated(1,2),
                              rotated(2,0), rotated(2,1), rotated(2,2));
