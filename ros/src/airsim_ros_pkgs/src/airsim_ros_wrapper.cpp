@@ -809,6 +809,11 @@ nav_msgs::Odometry AirsimROSWrapper::get_odom_msg_from_multirotor_state(const ms
         mat_cam_optical.getRotation(quat_cam_optical);
         quat_cam_optical.normalize();
         tf2::convert(quat_cam_optical, odom_msg.pose.pose.orientation);
+
+        /* odom_msg.pose.pose.orientation.x = odom_msg.pose.pose.orientation.w;
+        odom_msg.pose.pose.orientation.y = odom_msg.pose.pose.orientation.x;
+        odom_msg.pose.pose.orientation.z = odom_msg.pose.pose.orientation.y;
+        odom_msg.pose.pose.orientation.w = odom_msg.pose.pose.orientation.x; */
     }
 
     return odom_msg;
