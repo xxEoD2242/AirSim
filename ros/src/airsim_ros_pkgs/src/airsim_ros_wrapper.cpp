@@ -813,7 +813,7 @@ nav_msgs::Odometry AirsimROSWrapper::get_odom_msg_from_multirotor_state(const ms
         odom_msg.pose.pose.orientation.x = odom_msg.pose.pose.orientation.w;
         odom_msg.pose.pose.orientation.y = odom_msg.pose.pose.orientation.x;
         odom_msg.pose.pose.orientation.z = odom_msg.pose.pose.orientation.y;
-        odom_msg.pose.pose.orientation.w = odom_msg.pose.pose.orientation.z;
+        odom_msg.pose.pose.orientation.w = abs(odom_msg.pose.pose.orientation.z);
     }
 
     return odom_msg;
@@ -1089,7 +1089,7 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     matCamOptical(2, 3) = odom_msg.pose.pose.position.x;
     
     // Still off by 90 degrees
-    rotated = matCamOptical;
+    rotated = matCamOptical * zRot;
     mat_cam_optical.setValue(rotated(0,0), rotated(0,1), rotated(0,2),
                              rotated(1,0), rotated(1,1), rotated(1,2),
                              rotated(2,0), rotated(2,1), rotated(2,2));
@@ -1101,7 +1101,7 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     camera_pose.pose.orientation.x = camera_pose.pose.orientation.w;
     camera_pose.pose.orientation.y = camera_pose.pose.orientation.x;
     camera_pose.pose.orientation.z = camera_pose.pose.orientation.y;
-    camera_pose.pose.orientation.w = camera_pose.pose.orientation.z;
+    camera_pose.pose.orientation.w = abs(camera_pose.pose.orientation.z);
 
     return camera_pose;
 }
