@@ -741,13 +741,13 @@ nav_msgs::Odometry AirsimROSWrapper::get_odom_msg_from_multirotor_state(const ms
     {
         std::swap(odom_msg.pose.pose.position.x, odom_msg.pose.pose.position.y);
         odom_msg.pose.pose.position.z = -odom_msg.pose.pose.position.z;
-        // std::swap(odom_msg.pose.pose.orientation.x, odom_msg.pose.pose.orientation.y);
-        // odom_msg.pose.pose.orientation.z = -odom_msg.pose.pose.orientation.z;
+        std::swap(odom_msg.pose.pose.orientation.x, odom_msg.pose.pose.orientation.y);
+        odom_msg.pose.pose.orientation.z = -odom_msg.pose.pose.orientation.z;
         std::swap(odom_msg.twist.twist.linear.x, odom_msg.twist.twist.linear.y);
         odom_msg.twist.twist.linear.z = -odom_msg.twist.twist.linear.z;
         std::swap(odom_msg.twist.twist.angular.x, odom_msg.twist.twist.angular.y);
         odom_msg.twist.twist.angular.z = -odom_msg.twist.twist.angular.z;
-
+        /*
         Eigen::Matrix4d zRot = Eigen::Matrix4d::Identity();
         Eigen::Matrix4d xRot = Eigen::Matrix4d::Identity();
         Eigen::Matrix4d rotated = Eigen::Matrix4d::Zero();
@@ -810,7 +810,7 @@ nav_msgs::Odometry AirsimROSWrapper::get_odom_msg_from_multirotor_state(const ms
         quat_cam_optical.normalize();
         tf2::convert(quat_cam_optical, odom_msg.pose.pose.orientation);
 
-        /*  odom_msg.pose.pose.orientation.x = odom_msg.pose.pose.orientation.w;
+        odom_msg.pose.pose.orientation.x = odom_msg.pose.pose.orientation.w;
         odom_msg.pose.pose.orientation.y = odom_msg.pose.pose.orientation.x;
         odom_msg.pose.pose.orientation.z = odom_msg.pose.pose.orientation.y;
         odom_msg.pose.pose.orientation.w = abs(odom_msg.pose.pose.orientation.z); */
@@ -1059,12 +1059,12 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     zRot(0, 1) = 0.0;
     zRot(0, 2) = 1.0;
     zRot(0, 3) = 0.0;
-    zRot(1, 0) = 1.0;
+    zRot(1, 0) = -1.0;
     zRot(1, 1) = 0.0;
     zRot(1, 2) = 0.0;
     zRot(1, 3) = 0.0;
     zRot(2, 0) = 0.0;
-    zRot(2, 1) = 1.0;
+    zRot(2, 1) = -1.0;
     zRot(2, 2) = 0.0;
     zRot(2, 3) = 0.0;
 
@@ -1103,7 +1103,7 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     matCamOptical(2, 3) = odom_msg.pose.pose.position.x;
     
     // Still off by 90 degrees
-    rotated = matCamOptical * zRot * xRot;
+    rotated = matCamOptical * zRot;
     mat_cam_optical.setValue(rotated(0,0), rotated(0,1), rotated(0,2),
                              rotated(1,0), rotated(1,1), rotated(1,2),
                              rotated(2,0), rotated(2,1), rotated(2,2));
