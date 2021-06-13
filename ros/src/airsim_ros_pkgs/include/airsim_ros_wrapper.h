@@ -141,6 +141,7 @@ public:
 
     // std::vector<ros::CallbackQueue> callback_queues_;
     ros::AsyncSpinner img_async_spinner_;
+    ros::AsyncSpinner depth_img_async_spinner_;
     ros::AsyncSpinner lidar_async_spinner_;
     bool is_used_lidar_timer_cb_queue_;
     bool is_used_img_timer_cb_queue_;
@@ -222,6 +223,8 @@ private:
 
     /// ROS timer callbacks
     void img_response_timer_cb(const ros::TimerEvent& event); // update images from airsim_client_ every nth sec
+    void depth_img_response_timer_cb(const ros::TimerEvent& event); // Update depth images from airsim client
+    void stereo_img_response_timer_cb(const ros::TimerEvent& event); // update stereo images from airsim_client_ every nth sec
     void drone_state_timer_cb(const ros::TimerEvent& event); // update drone state from airsim_client_ every nth sec
     void lidar_timer_cb(const ros::TimerEvent& event);
 
@@ -272,6 +275,7 @@ private:
     sensor_msgs::ImagePtr get_depth_img_msg_from_response(const ImageResponse& img_response, const std::string& frame_id);
     
     void process_and_publish_img_response(const std::vector<ImageResponse>& img_response_vec, const int img_response_idx, const std::string& vehicle_name);
+    void process_and_publish_stereo_img_response(const ImageResponse& img_response, const std::string& vehicle_name, const int& image_type);
 
     // methods which parse setting json ang generate ros pubsubsrv
     void create_ros_pubs_from_settings_json();
@@ -346,6 +350,7 @@ private:
     // todo not sure if async spinners shuold be inside this class, or should be instantiated in airsim_node.cpp, and cb queues should be public
     // todo for multiple drones with multiple sensors, this won't scale. make it a part of VehicleROS?
     ros::CallbackQueue img_timer_cb_queue_;
+    ros::CallbackQueue depth_img_timer_cb_queue_;
     ros::CallbackQueue lidar_timer_cb_queue_;
 
     std::mutex drone_control_mutex_;
@@ -372,12 +377,15 @@ private:
 
     /// ROS Timers.
     ros::Timer airsim_img_response_timer_;
+    ros::Timer airsim_depth_img_response_timer_;
     ros::Timer airsim_control_update_timer_;
     ros::Timer airsim_lidar_update_timer_;
 
     typedef std::pair<std::vector<ImageRequest>, std::string> airsim_img_request_vehicle_name_pair;
     std::vector<airsim_img_request_vehicle_name_pair> airsim_img_request_vehicle_name_pair_vec_;
     std::vector<image_transport::Publisher> image_pub_vec_;
+    image_transport::Publisher depth_img_pub_;
+    image_transport::Publisher scene_img_pub_;
     std::vector<ros::Publisher> cam_info_pub_vec_;
     std::vector<ros::Publisher> cam_pose_pub_vec_;
 
