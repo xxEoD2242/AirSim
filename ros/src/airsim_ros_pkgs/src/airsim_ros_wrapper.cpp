@@ -1275,6 +1275,7 @@ ros::Time AirsimROSWrapper::update_state()
         vehicle_ros->curr_odom.child_frame_id = vehicle_ros->odom_frame_id;
         vehicle_ros->curr_odom.header.stamp = vehicle_time;
     }
+    
 
     return curr_ros_time;
 }
