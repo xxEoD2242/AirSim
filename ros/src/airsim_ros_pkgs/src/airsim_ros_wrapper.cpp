@@ -1461,7 +1461,7 @@ void AirsimROSWrapper::append_static_camera_tf(VehicleROS* vehicle_ros, const st
     static_cam_tf_optical_msg.child_frame_id = camera_name + "_optical/static";
     static_cam_tf_optical_msg.transform.translation.x = camera_setting.position.x();
     static_cam_tf_optical_msg.transform.translation.y = camera_setting.position.y();
-    static_cam_tf_optical_msg.transform.translation.z = camera_setting.position.Z();
+    static_cam_tf_optical_msg.transform.translation.z = camera_setting.position.z();
 
     Eigen::Matrix4d zRot = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d xRot = Eigen::Matrix4d::Identity();
