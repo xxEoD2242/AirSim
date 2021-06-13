@@ -1001,7 +1001,7 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     zRot(2, 2) = 0.0;
     zRot(2, 3) = 0.0;
 
-    xRot(0, 0) = -1.0;
+    xRot(0, 0) = 1.0;
     xRot(0, 1) = 0.0;
     xRot(0, 2) = 0.0;
     xRot(0, 3) = 0.0;
@@ -1011,7 +1011,7 @@ geometry_msgs::PoseStamped AirsimROSWrapper::build_camera_pose(ros::Time time, c
     xRot(1, 3) = 0.0;
     xRot(2, 0) = 0.0;
     xRot(2, 1) = 0.0;
-    xRot(2, 2) = -1.0;
+    xRot(2, 2) = 1.0;
     xRot(2, 3) = 0.0;
     
     Eigen::Matrix4d matCamOptical = Eigen::Matrix4d::Identity();
