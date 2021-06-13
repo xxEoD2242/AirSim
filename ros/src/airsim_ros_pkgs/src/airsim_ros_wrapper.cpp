@@ -1498,22 +1498,22 @@ void AirsimROSWrapper::append_static_camera_tf(VehicleROS* vehicle_ros, const st
 
     tf2::Quaternion quat_cam_body;
     tf2::Quaternion quat_cam_optical;
-    tf2::convert(cam_tf_body_msg.transform.rotation, quat_cam_body);
+    tf2::convert(static_cam_tf_optical_msg.transform.rotation, quat_cam_body);
     tf2::Matrix3x3 mat_cam_body(quat_cam_body);
     tf2::Matrix3x3 mat_cam_optical;
 
     matCamOptical(0, 0) = mat_cam_body.getColumn(0).getX();
     matCamOptical(0, 1) = mat_cam_body.getColumn(1).getX();
     matCamOptical(0, 2) = mat_cam_body.getColumn(2).getX();
-    matCamOptical(0, 3) = cam_tf_body_msg.transform.translation.x;
+    matCamOptical(0, 3) = static_cam_tf_optical_msg.transform.translation.x;
     matCamOptical(1, 0) = mat_cam_body.getColumn(0).getY();
     matCamOptical(1, 1) = mat_cam_body.getColumn(1).getY();
     matCamOptical(1, 2) = mat_cam_body.getColumn(2).getY();
-    matCamOptical(1, 3) = cam_tf_body_msg.transform.translation.y;
+    matCamOptical(1, 3) = static_cam_tf_optical_msg.transform.translation.y;
     matCamOptical(2, 0) = mat_cam_body.getColumn(0).getZ();
     matCamOptical(2, 1) = mat_cam_body.getColumn(1).getZ();
     matCamOptical(2, 2) = mat_cam_body.getColumn(2).getZ();
-    matCamOptical(2, 3) = cam_tf_body_msg.transform.translation.z;
+    matCamOptical(2, 3) = static_cam_tf_optical_msg.transform.translation.z;
     
     // Still off by 90 degrees
     rotated = matCamOptical * zRot * xRot;
@@ -1523,7 +1523,7 @@ void AirsimROSWrapper::append_static_camera_tf(VehicleROS* vehicle_ros, const st
    
     mat_cam_optical.getRotation(quat_cam_optical);
     quat_cam_optical.normalize();
-    tf2::convert(quat_cam_optical, cam_tf_optical_msg.transform.rotation);
+    tf2::convert(quat_cam_optical, static_cam_tf_optical_msg.transform.rotation);
 
     vehicle_ros->static_tf_msg_vec.emplace_back(static_cam_tf_body_msg);
     vehicle_ros->static_tf_msg_vec.emplace_back(static_cam_tf_optical_msg);
