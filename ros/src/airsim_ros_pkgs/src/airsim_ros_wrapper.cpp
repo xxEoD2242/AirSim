@@ -1167,7 +1167,7 @@ ros::Time AirsimROSWrapper::update_state()
 
         // vehicle environment, we can get ambient temperature here and other truths
         auto env_data = airsim_client_->simGetGroundTruthEnvironment(vehicle_ros->vehicle_name);
-        vehicle_ros->collision_info = airsim_client_->getCollisionInfo(vehicle_ros->vehicle_name);
+        vehicle_ros->collision_info = airsim_client_->simGetCollisionInfo(vehicle_ros->vehicle_name);
 
         if (airsim_mode_ == AIRSIM_MODE::DRONE)
         {
