@@ -1185,7 +1185,7 @@ ros::Time AirsimROSWrapper::update_state()
             //vehicle_ros->gps_sensor_msg = get_gps_sensor_msg_from_airsim_geo_point(drone->curr_drone_state.gps_location);
             //vehicle_ros->gps_sensor_msg.header.stamp = vehicle_time;
 
-            // vehicle_ros->curr_odom = get_odom_msg_from_multirotor_state(drone->curr_drone_state);
+            vehicle_ros->curr_odom = get_odom_msg_from_multirotor_state(drone->curr_drone_state);
         }
         else
         {
@@ -1244,8 +1244,8 @@ void AirsimROSWrapper::publish_vehicle_state()
         }
 
         // odom and transforms
-        //vehicle_ros->odom_local_pub.publish(vehicle_ros->curr_odom);
-       // publish_odom_tf(vehicle_ros->curr_odom);
+        vehicle_ros->odom_local_pub.publish(vehicle_ros->curr_odom);
+        publish_odom_tf(vehicle_ros->curr_odom);
         publish_world_to_vehicle_tf(vehicle_ros->curr_odom);
 
         // ros::Time ros_timestamp = airsim_timestamp_to_ros();
