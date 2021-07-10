@@ -368,6 +368,8 @@ void AirsimROSWrapper::create_ros_pubs_from_settings_json()
         is_used_lidar_timer_cb_queue_ = true;
     }
 
+    collision_pub_ = nh_private_.advertise<std_msgs::Bool>("collision", 10);
+
     initialize_airsim();
 }
 
@@ -1072,6 +1074,16 @@ sensor_msgs::NavSatFix AirsimROSWrapper::get_gps_sensor_msg_from_airsim_geo_poin
     return gps_msg;
 }
 
+void AirsimROSWrapper::publish_collisions(const msr::airlib::CollisionInfo& collision_info) const
+{
+    if (collision_info.has_collided){
+        std_msgs::Bool msg;
+        msg.data = true;
+
+        collision_pub_.publish(msg);
+    }
+} //publish_collisions
+
 ros::Time AirsimROSWrapper::chrono_timestamp_to_ros(const std::chrono::system_clock::time_point& stamp) const
 {
     auto dur = std::chrono::duration<double>(stamp.time_since_epoch());
@@ -1094,7 +1106,7 @@ void AirsimROSWrapper::drone_state_timer_cb(const ros::TimerEvent& event)
     try
     {
         // todo this is global origin
-        origin_geo_point_pub_.publish(origin_geo_point_msg_);
+       // origin_geo_point_pub_.publish(origin_geo_point_msg_);
 
         // get the basic vehicle pose and environmental state
         const auto now = update_state();
@@ -1155,6 +1167,7 @@ ros::Time AirsimROSWrapper::update_state()
 
         // vehicle environment, we can get ambient temperature here and other truths
         auto env_data = airsim_client_->simGetGroundTruthEnvironment(vehicle_ros->vehicle_name);
+        vehicle_ros->collision_info = rpc->getCollisionInfo(vehicle_ros->vehicle_name);
 
         if (airsim_mode_ == AIRSIM_MODE::DRONE)
         {
@@ -1169,10 +1182,10 @@ ros::Time AirsimROSWrapper::update_state()
                 got_sim_time = true;
             }
 
-            vehicle_ros->gps_sensor_msg = get_gps_sensor_msg_from_airsim_geo_point(drone->curr_drone_state.gps_location);
-            vehicle_ros->gps_sensor_msg.header.stamp = vehicle_time;
+            //vehicle_ros->gps_sensor_msg = get_gps_sensor_msg_from_airsim_geo_point(drone->curr_drone_state.gps_location);
+            //vehicle_ros->gps_sensor_msg.header.stamp = vehicle_time;
 
-            vehicle_ros->curr_odom = get_odom_msg_from_multirotor_state(drone->curr_drone_state);
+            // vehicle_ros->curr_odom = get_odom_msg_from_multirotor_state(drone->curr_drone_state);
         }
         else
         {
@@ -1221,7 +1234,7 @@ void AirsimROSWrapper::publish_vehicle_state()
         auto& vehicle_ros = vehicle_name_ptr_pair.second;
 
         // simulation environment truth
-        vehicle_ros->env_pub.publish(vehicle_ros->env_msg);
+        //vehicle_ros->env_pub.publish(vehicle_ros->env_msg);
 
         if (airsim_mode_ == AIRSIM_MODE::CAR)
         {
@@ -1231,15 +1244,16 @@ void AirsimROSWrapper::publish_vehicle_state()
         }
 
         // odom and transforms
-        vehicle_ros->odom_local_pub.publish(vehicle_ros->curr_odom);
-        publish_odom_tf(vehicle_ros->curr_odom);
+        //vehicle_ros->odom_local_pub.publish(vehicle_ros->curr_odom);
+       // publish_odom_tf(vehicle_ros->curr_odom);
         publish_world_to_vehicle_tf(vehicle_ros->curr_odom);
 
         // ros::Time ros_timestamp = airsim_timestamp_to_ros();
         vehicle_ros->depth_cam_pub.publish(build_camera_pose(vehicle_ros->stamp, vehicle_ros->curr_odom, "fron_center_custom_body"));
+        publish_collisions(vehicle_ros->collision_info);
 
         // ground truth GPS position from sim/HITL
-        vehicle_ros->global_gps_pub.publish(vehicle_ros->gps_sensor_msg);
+        //vehicle_ros->global_gps_pub.publish(vehicle_ros->gps_sensor_msg);
 
         for (auto& sensor_publisher : vehicle_ros->sensor_pubs)
         {

@@ -54,6 +54,7 @@ STRICT_MODE_ON
 #include <sensor_msgs/Range.h>
 #include <rosgraph_msgs/Clock.h>
 #include <std_srvs/Empty.h>
+#include <std_msgs/Bool.h>
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
@@ -170,6 +171,7 @@ private:
         ros::Publisher depth_cam_pub;
         ros::Publisher env_pub;
         airsim_ros_pkgs::Environment env_msg;
+        msr::airlib::CollisionInfo collision_info;
         std::vector<SensorPublisher> sensor_pubs;
         // handle lidar seperately for max performance as data is collected on its own thread/callback
         std::vector<SensorPublisher> lidar_pubs;
@@ -276,6 +278,7 @@ private:
     
     void process_and_publish_img_response(const std::vector<ImageResponse>& img_response_vec, const int img_response_idx, const std::string& vehicle_name);
     void process_and_publish_stereo_img_response(const ImageResponse& img_response, const std::string& vehicle_name, const int& image_type);
+    void publish_collisions(const msr::airlib::CollisionInfo& collision_info) const;
 
     // methods which parse setting json ang generate ros pubsubsrv
     void create_ros_pubs_from_settings_json();
@@ -318,6 +321,7 @@ private:
     ros::Subscriber vel_cmd_all_world_frame_sub_;
     ros::ServiceServer takeoff_all_srvr_;
     ros::ServiceServer land_all_srvr_;
+    ros::Publisher collision_pub_;
 
     // todo - subscriber / services for a GROUP of robots, which is defined by a list of `vehicle_name`s passed in the ros msg / srv request
     ros::Subscriber vel_cmd_group_body_frame_sub_;
